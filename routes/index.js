@@ -14,4 +14,7 @@ router.use('/oauth', oauth);
 var users = require('./users');
 router.use('/users', users);
 
+var scrapers = require('./scrapers');
+router.use('/scrapers', scrapers);
+
 module.exports = router;
