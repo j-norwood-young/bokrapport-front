@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var cheerio = require("cheerio");
 
+var fs = require("fs");
+
 var scraper = require("../lib/scraper");
 
 var mysql = require("../lib/mysql");
@@ -128,6 +130,58 @@ router.get("/players", function(req, res, next) {
 	.then(null, function(err) {
 		res.render("error", { error: err });
 	});
+});
+
+router.get("/fixtures", function(req, res) {
+	var fixtures = JSON.parse(fs.readFileSync("./data/fixtures.json"));
+	var evt = null;
+	var countries = [];
+	//Get all the countries for ease of looking up
+	mysql.get("country")
+	.then(function(result) {
+		countries = result;
+		console.log(countries);
+		return mysql.getOne("event", { name: fixtures.event.label });
+	})
+	.then(function(evt) {
+		if (!evt) { //Event missing, insert
+			return mysql.insert("event", { name: fixtures.event.label, start_date: fixtures.event.start.label, end_date: fixtures.event.end.label }).then(function(id) {
+				return mysql.getOne("event", { id: id });
+			});
+		}
+		return evt;
+	})
+	.then(function(result) {
+		evt = result;
+		fixtures.matches.forEach(function(match) {
+			mysql.getOne("venue", { name: match.venue.name })
+			.then(function(venue) {
+				if (!venue) { //Venue missing, insert
+					// console.log("Venue missing");
+					var country = countries.find(function(country) {
+						return (country.name == venue.country.name);
+					});
+					// console.log("Country", country);
+					return mysql.insert("venue", { name: match.venue.name, city: match.venue.city,  country_id: country.id }).then(function(id) {
+						return mysql.getOne("venue", { id: id });
+					});
+				}
+				return venue;
+			})
+			.then(function(venue) {
+				var team1 = countries.find(function(country) {
+					return (country.name == match.teams[0].name);
+				});
+				var team2 = countries.find(function(country) {
+					return (country.name == match.teams[1].name);
+				});
+				console.log(team1, team2, venue);
+			})
+		})
+		// res.send(evt);
+	});
+	
+	res.send(fixtures);
 });
 
 module.exports = router;
