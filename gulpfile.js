@@ -36,7 +36,7 @@ var imageInputDir = "assets/images/*.{jpg,jpeg,png,gif}";
 
 // Output dirs
 var minifiedDir = "public/";
-var developmentDir = "development/";
+var developmentDir = "public/development/";
 var testDir = "test/";
 var jsOutputDir = "js/";
 var cssOutputDir = "css/";
