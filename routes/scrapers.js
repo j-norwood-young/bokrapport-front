@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var cheerio = require("cheerio");
+var moment = require("moment");
 
 var fs = require("fs");
 
@@ -59,59 +60,62 @@ router.get("/players", function(req, res, next) {
 		});
 		player_urls.shift();
 		console.log("Player count", player_urls.length);
-		player_urls = shuffle(player_urls);
-		// player_urls = player_urls.slice(0, 500);
-
-		// for(var i = 0; i < player_urls.length; i++) {
-		// 	mysql.getOne("players", { saru_url: player_urls[i] })
-		// 	.then(function(result) {
-		// 		if (result) {
-		// 			console.log("Found", result.firstname + " " + result.surname)
-		// 			player_urls.splice(i, 1);
-		// 		}
-		// 	});
-		// }
-		// console.log("Unprocessed Player count", player_urls.length);
-		var worker = setInterval(function() {
-			if (!player_urls.length) {
-				clearInterval(worker);
-				return false;
-			}
-			var player_url = player_urls.shift();
-			mysql.getOne("players", { saru_url: player_url })
-			.then(function(result) {
-				if (result) {
-					console.log("Skipping", result.firstname + " " + result.surname);
-					return true;
-				}
-				console.log("Fetching", player_url);
-				scraper.fetch("http://www.sarugby.net" + player_url)
-				.then(function(player_html) {
-					var $ = cheerio.load(player_html);
-					var stats = {}
-					stats.saru_url = player_url;
-					stats.last_scrape = new Date();
-					$(".player-single-summary").find("tr").each(function(i, row) {
-						if (data_map[$(this).find("td").first().text().trim()]) {
-							stats[data_map[$(this).find("td").first().text().trim()]] = $(this).find("td").last().text().trim();
-						}
-					});
-					stats.weight = parseInt(stats.weight);
-					stats.position = $(".player-career-rugby").find("table").first().find("tr").next().find("td").next().html().trim();
-					stats.province = $(".player-career-rugby").find("table").first().find("tr").next().next().find("td").next().html().trim();
-					stats.photo = $(".player-single-img").find("img").attr("src");
-					stats.caps = $(".player-career-springbok").find("table").first().find("tr").next().find("td").next().html().trim();
-					console.log(stats);
-					mysql.insert("players", stats);
-					// .then(function(res) {
-					// 	console.log(res);
-					// }, function(err) {
-					// 	console.log("Err", err);
-					// });
+		// player_urls = shuffle(player_urls);
+		// player_urls = player_urls.slice(0, 3);
+		mysql.get("player")
+		.then(function(result) {
+			for(var i = 0; i < player_urls.length; i++) {
+				result.forEach(function(player) {
+					if (player.saru_url == player_urls[i]) {
+						player_urls.splice(i, 1);
+					}
 				});
-			})
-			
-		}, 2000);
+			}
+			console.log("Remainging player count", player_urls.length);
+			var worker = setInterval(function() {
+				if (!player_urls.length) {
+					clearInterval(worker);
+					return false;
+				}
+				var player_url = player_urls.shift();
+				mysql.getOne("player", { saru_url: player_url })
+				.then(function(result) {
+					if (result) {
+						console.log("Skipping", result.firstname + " " + result.surname);
+						return true;
+					}
+					console.log("Fetching", player_url);
+					scraper.fetch("http://www.sarugby.net" + player_url)
+					.then(function(player_html) {
+						var $ = cheerio.load(player_html);
+						var stats = {}
+						stats.saru_url = player_url;
+						stats.last_scrape = new Date();
+						$(".player-single-summary").find("tr").each(function(i, row) {
+							if (data_map[$(this).find("td").first().text().trim()]) {
+								stats[data_map[$(this).find("td").first().text().trim()]] = $(this).find("td").last().text().trim();
+							}
+						});
+						try {
+							stats.birth_date = moment(stats.birth_date, "D MMM YYYY").format("YYYY-MM-DD");
+						} catch(e) {
+							console.log(e);
+							stats.birth_date = 0;
+						}
+						stats.weight = parseInt(stats.weight);
+						stats.position = $(".player-career-rugby").find("table").first().find("tr").next().find("td").next().html().trim();
+						stats.province = $(".player-career-rugby").find("table").first().find("tr").next().next().find("td").next().html().trim();
+						stats.photo = $(".player-single-img").find("img").attr("src");
+						stats.caps = $(".player-career-springbok").find("table").first().find("tr").next().find("td").next().html().trim();
+						console.log(stats);
+						mysql.insert("player", stats);
+					});
+				}, function(err) {
+					console.log("Error", err);
+				})
+				
+			}, 2000);
+		});
 		// player_urls.forEach(function(player_url) {
 		// 	console.log("Fetching", player_url)
 		// 	scraper.fetch("http://www.sarugby.net" + player_url)

@@ -1,6 +1,19 @@
 extends layout
 
 block content
-	h1= title
-	p Welcome to #{title}
-	a.btn.btn-facebook(href="/oauth/auth/facebook") Login with Facebook
+	.container
+		.dateline 
+			.venue #{game.venue_name}, #{game.city}
+			.datetime= game.date_time
+			.teams #{countries[0].name} vs #{countries[1].name}
+		ul.list-group.players
+			each player in players
+				li.list-group-item.player
+					img(src="/images/#{player.firstname} #{player.surname}.png")
+					.name #{player.firstname} #{player.surname}
+						.rating
+					.ratings
+						.rapport_rating= player.rating
+						.avg_rating= player.avg_rating
+					br(style="clear:both")
+		a.btn.btn-facebook(href="/oauth/auth/facebook") Login with Facebook
