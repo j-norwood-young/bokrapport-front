@@ -156,8 +156,9 @@ gulp.task('watch', function() {
 	gulp.watch(jsInputDir, ['js']);
 	gulp.watch(lessInputDir, ['css']);
 	gulp.watch(fontAwesomeDir, ['font-awesome']);
+	gulp.watch(imageInputDir, ['image']);
 	// gulp.watch(testJSInputDir, ['test-js']);
-	gulp.watch(templateInputDir, ['js']);
+	// gulp.watch(templateInputDir, ['js']);
 });
 
 gulp.task('default', ['js', 'css']);
