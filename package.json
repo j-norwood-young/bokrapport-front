@@ -13,6 +13,7 @@
     "express": "~4.12.2",
     "express-admin": "^1.2.6",
     "express-session": "^1.11.3",
+    "font-awesome": "^4.4.0",
     "gulp": "^3.9.0",
     "jade": "~1.9.2",
     "jquery": "^2.1.4",
