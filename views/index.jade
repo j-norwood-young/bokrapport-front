@@ -6,29 +6,30 @@ block content
 			.venue #{game.venue_name}, #{game.city}
 			.datetime= game.utime
 			.teams #{countries[0].name} vs #{countries[1].name}
-		ul.list-group.players
+		.row.players
 			each player in players
-				li.list-group-item.player
-					.player-identity
-						img(src="/uploads/#{player.photo}")
-						.name #{player.firstname} #{player.surname}
-					table.ratings
-						tr.user_rating
-							td.rating-description
-								.numberpicker1
-									.slider.slider-icon(data-id="#{player.id}")
-										i.fa.fa-arrows-h
-									.slider-background-container
-										.slider-background
-							td.rating(id="user_rating_#{player.id}") 0
-						tr.avg_rating
-							td.rating-description
-								i.fa.fa-users
-							td.rating= player.avg_rating
-						tr.rapport_rating
-							td.rating-description
-								img.rapport(src="/images/rapport.png")
-							td.rating= player.rating
-					
-					br(style="clear:both")
+				.col-xs-12.col-md-6
+					.player
+						.player-identity
+							img(src="/uploads/#{player.photo}")
+							.name #{player.firstname} #{player.surname}
+						table.ratings
+							tr.user_rating
+								td.rating-description
+									.numberpicker1
+										.slider.slider-icon(data-id="#{player.id}")
+											i.fa.fa-arrows-h
+										.slider-background-container
+											.slider-background
+								td.rating(id="user_rating_#{player.id}") 0
+							tr.avg_rating
+								td.rating-description
+									i.fa.fa-users
+								td.rating= player.avg_rating
+							tr.rapport_rating
+								td.rating-description
+									img.rapport(src="/images/rapport.png")
+								td.rating= player.rating
+						
+						br(style="clear:both")
 		a.btn.btn-facebook(href="/oauth/auth/facebook") Login with Facebook
