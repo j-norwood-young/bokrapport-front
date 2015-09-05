@@ -556,8 +556,8 @@
                     "text": true
                 },
                 "type": "varchar(255)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
@@ -572,8 +572,8 @@
                     "text": true
                 },
                 "type": "varchar(255)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
@@ -588,8 +588,8 @@
                     "text": true
                 },
                 "type": "varchar(255)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
@@ -604,8 +604,8 @@
                     "text": true
                 },
                 "type": "varchar(255)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
@@ -620,8 +620,8 @@
                     "text": true
                 },
                 "type": "varchar(255)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
@@ -636,8 +636,8 @@
                     "text": true
                 },
                 "type": "varchar(255)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
