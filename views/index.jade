@@ -1,19 +1,34 @@
 extends layout
 
 block content
-	.container
+	.container.bg-container
 		.dateline 
 			.venue #{game.venue_name}, #{game.city}
-			.datetime= game.date_time
+			.datetime= game.utime
 			.teams #{countries[0].name} vs #{countries[1].name}
 		ul.list-group.players
 			each player in players
 				li.list-group-item.player
-					img(src="/images/#{player.firstname} #{player.surname}.png")
-					.name #{player.firstname} #{player.surname}
-						.rating
-					.ratings
-						.rapport_rating= player.rating
-						.avg_rating= player.avg_rating
+					.player-identity
+						img(src="/uploads/#{player.photo}")
+						.name #{player.firstname} #{player.surname}
+					table.ratings
+						tr.user_rating
+							td.rating-description
+								.numberpicker1
+									.slider.slider-icon(data-id="#{player.id}")
+										i.fa.fa-arrows-h
+									.slider-background-container
+										.slider-background
+							td.rating(id="user_rating_#{player.id}") 0
+						tr.avg_rating
+							td.rating-description
+								i.fa.fa-users
+							td.rating= player.avg_rating
+						tr.rapport_rating
+							td.rating-description
+								img.rapport(src="/images/rapport.png")
+							td.rating= player.rating
+					
 					br(style="clear:both")
 		a.btn.btn-facebook(href="/oauth/auth/facebook") Login with Facebook

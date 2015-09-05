@@ -1,12 +1,24 @@
 var jquery = require("jquery");
+
 $(function() {
-	$(".rating").raty({
-		number: 5,
-		half: true,
-		path: "images",
-		hints: null,
-		starOff: "bok3.png",
-		starHalf: "bok2.png",
-		starOn: "bok1.png"
-	});
+	
+	$(".slider").each(function() {
+		// console.log(this);
+		var top = $(this).css("margin-top");
+		var left = $(this).position().left;
+		var maxx = $(this).parent().width() - $(this).width();
+		var id = $(this).data("id");
+		console.log(left, maxx);
+		new Draggable(this, {
+			limit: {
+				y: top,
+				x: [left, maxx  + left]
+			},
+			onDrag: function(el, x) {
+				console.log("x", x, "left", left, "maxx", maxx, "result", x/maxx);
+				$("#user_rating_" + id).html(Math.round((x - left) / maxx * 10));
+			}
+		});
+	})
+	
 })

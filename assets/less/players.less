@@ -1,45 +1,76 @@
 @import "variables";
 
 .players {
+	.list-group-item {
+		background-color: rgba(255,255,255,0.8)
+	}
 	.player {
+		margin-bottom: 15px;
 		img {
+			// float: left;
+			// margin-left: -15px;
+			// margin-bottom: -10px;
+			max-width: 100%;
+			// padding-right: 15px;
+		}
+		.player-identity {
+			text-align: center;
 			float: left;
-			margin-left: -15px;
-			margin-bottom: -10px;
-			max-width: 25%;
-			padding-right: 15px;
+			width: 40%;
 		}
 		.name {
-			font-size: 18pt;
-			font-weight: bold;
-			width: 50%;
-			float: left;
+			text-align: center;
+			font-size: 16pt;
+			background-color: @gold;
+			border: 1px darken(@gold, 10%) solid;
+			// font-weight: bold;
+			// width: 50%;
+			// float: left;
 		}
 		.ratings {
 			float: left;
+			width: 55%;
+			margin-left: 5%;
+			border-spacing: 0px 10px;
+			border-collapse: separate;
+			// float: left;
+			.rating-description {
+				text-align: right;
+				padding-right: 10px;
+				img {
+					// max-width: 100%;
+				}
+			}
+			.rating {
+				width: 50px;
+				height: 50px;
+				font-size: 30px;
+				line-height: 36px;
+				text-align: center;
+				// display: table-cell;
+				vertical-align: middle;
+				margin-right: 10px;
+				
+
+			}
+		}
+		.user_rating {
+			.rating {
+				background-color: @green;
+				color: @gold;
+			}
 		}
 		.rapport_rating {
-			width: 80px;
-			height: 80px;
-			background-color: @green;
-			text-align: center;
-			display: table-cell;
-			vertical-align: middle;
-			color: @gold;
-			font-size: 40px;
-			line-height: 80px;
+			.rating {
+				background-color: @red;
+				color: white;
+			}
 		}
 		.avg_rating {
-			clear: both;
-			width: 80px;
-			height: 80px;
-			background-color: @gold;
-			text-align: center;
-			display: table-cell;
-			vertical-align: middle;
-			color: @green;
-			font-size: 40px;
-			line-height: 80px;
+			.rating {
+				background-color: @gold;
+				color: @green;
+			}
 		}
 		.rating {
 			img {

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require("../lib/mysql");
+var moment = require("moment-timezone");
 
 if (!Array.prototype.find) {
   Array.prototype.find = function(predicate) {
@@ -31,14 +32,14 @@ router.get('/', function(req, res, next) {
 	var rapport_results = null;
 	var user_results = null;
 	var countries = null;
-	mysql.query("SELECT game.*, venue.name AS venue_name, venue.city FROM `game` JOIN venue ON venue.id = game.venue_id WHERE date_time < NOW() ORDER BY date_time DESC LIMIT 1")
+	mysql.query("SELECT game.*, UNIX_TIMESTAMP(game.date_time) AS utime, venue.name AS venue_name, venue.city FROM `game` JOIN venue ON venue.id = game.venue_id WHERE date_time < NOW() ORDER BY date_time DESC LIMIT 1")
 	.then(function(result) {
 		game = result.pop();
 		return mysql.query("SELECT country.*, country_game.score FROM country_game JOIN country ON country_game.country_id = country.id WHERE country_game.game_id = ?", game.id);
 	})
 	.then(function(result) {
 		countries = result;
-		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id, player.firstname, player.surname, player.photo, player.position FROM player_rating JOIN player ON player_rating.player_id = player.id WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
+		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id, player.firstname, player.surname, player.photo, player.position, player.id FROM player_rating JOIN player ON player_rating.player_id = player.id WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
 	})
 	.then(function(result) {
 		rapport_results = result;
@@ -54,8 +55,8 @@ router.get('/', function(req, res, next) {
 			rapport_result.avg_rating = tmp.rating;
 			return rapport_result;
 		});
-		console.log(players);
-		res.render("index", { title: "BokRapport", game: game, playser: players, rapport_results: rapport_results, user_results: user_results, countries: countries });
+		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("d MMM YYYY");
+		res.render("index", { title: "BokRapport", game: game, players: players, rapport_results: rapport_results, user_results: user_results, countries: countries });
 	})
 	.then(null, function(err) {
 		console.log("Error", err);

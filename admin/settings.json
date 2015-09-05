@@ -402,7 +402,7 @@
                 "name": "photo",
                 "verbose": "photo",
                 "control": {
-                    "text": true
+                    "file": true
                 },
                 "type": "varchar(255)",
                 "allowNull": false,
@@ -540,8 +540,8 @@
                     "text": true
                 },
                 "type": "varchar(20)",
-                "allowNull": false,
-                "defaultValue": null,
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": false
                 },
@@ -966,10 +966,10 @@
                 "allowNull": false,
                 "defaultValue": null,
                 "listview": {
-                    "show": true
+                    "show": false
                 },
                 "editview": {
-                    "show": true
+                    "show": false
                 }
             },
             {
