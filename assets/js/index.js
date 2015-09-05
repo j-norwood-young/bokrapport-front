@@ -5,15 +5,21 @@ $(function() {
 	var draggables = [];
 
 	var makeSliders = function() {
-		console.log("makeSliders");
 		draggables = [];
 		$(".slider").each(function() {
-			// console.log(this);
+			var self = this;
+			var offset = 0;
+			var width = $(this).width();
+			var maxx = $(this).parent().width() - width;
+			
 			$(this).css("left", $(this).parent().position().left);
 			var top = $(this).css("margin-top");
 			var left = $(this).position().left;
-			var maxx = $(this).parent().width() - $(this).width();
+			
 			var id = $(this).data("id");
+			if ($(this).data("val")) {
+				offset = Math.round(maxx / 10 * $(this).data("val"));
+			}
 			// console.log(left, maxx);
 			var draggable = new Draggable(this, {
 				limit: {
@@ -21,10 +27,11 @@ $(function() {
 					x: [left, maxx  + left]
 				},
 				onDrag: function(el, x) {
-					// console.log("x", x, "left", left, "maxx", maxx, "result", x/maxx);
-					$("#user_rating_" + id).html(Math.round((x - left) / maxx * 10));
+					var val = Math.round((x - left) / maxx * 10);
+					$(self).data("val", val);
+					$("#user_rating_" + id).html(val);
 				}
-			});
+			}).set(left + offset, top);
 			draggables.push(draggable);
 		});
 	}
