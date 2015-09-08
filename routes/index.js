@@ -28,9 +28,11 @@ if (!Array.prototype.find) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+	console.log("Session", req.session);
 	var game = null;
 	var rapport_results = null;
 	var user_results = null;
+	var avg_results = null;
 	var countries = null;
 	mysql.query("SELECT game.*, UNIX_TIMESTAMP(game.date_time) AS utime, venue.name AS venue_name, venue.city FROM `game` JOIN venue ON venue.id = game.venue_id WHERE date_time < NOW() ORDER BY date_time DESC LIMIT 1")
 	.then(function(result) {
@@ -43,20 +45,42 @@ router.get('/', function(req, res, next) {
 	})
 	.then(function(result) {
 		rapport_results = result;
+		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? AND user_id = ?", [game.id, req.session.userId ]);
+	})
+	.then(function(result) {
+		user_results = result;
 		return mysql.query("SELECT AVG(player_rating.rating) AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? GROUP BY player_id", game.id);
 	})
 	.then(function(result) {
-		var user_results = result;
+		var avg_results = result;
 		//Combine our averages with Rapport score
 		players = rapport_results.map(function(rapport_result) {
-			var tmp = user_results.find(function(user_result) {
-				return user_result.player_id == rapport_result.player_id;
+			var tmp = avg_results.find(function(avg_result) {
+				return avg_result.player_id == rapport_result.player_id;
 			});
-			rapport_result.avg_rating = tmp.rating;
+			if (tmp) {
+				rapport_result.avg_rating = tmp.rating;
+			} else {
+				rapport_result.avg_rating = 0;
+			}
+			if (user_results) {
+				console.log("User results", user_results);
+				var tmp = user_results.find(function(user_result) {
+					return user_result.player_id == rapport_result.player_id;
+				});
+				if (tmp) {
+					rapport_result.user_rating = tmp.rating;
+				} else {
+					rapport_result.user_rating = 0;	
+				}
+			} else {
+				rapport_result.user_rating = 0;
+			}
+			console.log(rapport_result);
 			return rapport_result;
 		});
 		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("d MMM YYYY");
-		res.render("index", { title: "BokRapport", game: game, players: players, rapport_results: rapport_results, user_results: user_results, countries: countries });
+		res.render("index", { title: "BokRapport", game: game, players: players, rapport_results: rapport_results, avg_results: avg_results, countries: countries, user_results: user_results });
 	})
 	.then(null, function(err) {
 		console.log("Error", err);
@@ -74,5 +98,8 @@ router.use('/users', users);
 
 var scrapers = require('./scrapers');
 router.use('/scrapers', scrapers);
+
+var api = require("./api");
+router.use("/api", api);
 
 module.exports = router;

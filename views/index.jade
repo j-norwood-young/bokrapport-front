@@ -2,7 +2,7 @@ extends layout
 
 block content
 	.container
-		.dateline 
+		#game_data.dateline(data-game-id="#{game.id}")
 			.venue #{game.venue_name}, #{game.city}
 			.datetime= game.utime
 			.teams #{countries[0].name} vs #{countries[1].name}
@@ -17,15 +17,15 @@ block content
 							tr.user_rating
 								td.rating-description
 									.numberpicker1
-										.slider.slider-icon(data-id="#{player.id}")
+										.slider.slider-icon(id="slider_#{player.id}",data-id="#{player.id}",data-val="#{player.user_rating}")
 											i.fa.fa-arrows-h
 										.slider-background-container
 											.slider-background
-								td.rating(id="user_rating_#{player.id}") 0
+								td.rating(id="user_rating_#{player.id}")= player.user_rating
 							tr.avg_rating
 								td.rating-description
 									i.fa.fa-users
-								td.rating= player.avg_rating
+								td.rating(id="avg_rating_#{player.id}")= player.avg_rating
 							tr.rapport_rating
 								td.rating-description
 									img.rapport(src="/images/rapport.png")

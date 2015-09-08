@@ -56,9 +56,9 @@ gulp.task('lint', function() {
 });
 
 gulp.task('js', ['lint'], function() {
-	return gulp.src(jsInputFile)
+	return gulp.src(jsInputDir)
 		.pipe(browserify({ insertGlobals: true }))
-		.pipe(rename(projectName + ".js"))
+		// .pipe(rename(projectName + ".js"))
 		.pipe(gulp.dest(developmentDir + jsOutputDir))
 		.pipe(notify({ message: 'Built JavaScript'}));
 });
