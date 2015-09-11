@@ -34,8 +34,8 @@ $(function() {
 			},
 			onDrag: function(el, x) {
 				var val = Math.round((x - left) / maxx * 10);
-				$(self).data("val", val);
-				$("#user_rating_" + id).html(val);
+				$(self).data("val", val );
+				$("#user_rating_" + id).html((val) ? val : "?");
 			},
 			onDragEnd: function(el, x) {
 				var val = Math.round((x - left) / maxx * 10);
@@ -81,7 +81,7 @@ $(function() {
 			if (hasLocalStorage()) {
 				val = localStorage.getItem("rating-" + gameId + "." + id);
 				if (val) {
-					$("#user_rating_" + id).html(val);
+					$("#user_rating_" + id).html(parseInt(val) ? val : "?");
 					setSlider(self, val);
 					return;
 				}
@@ -89,7 +89,7 @@ $(function() {
 			$.get("/api/rating/avg/" + gameId + "/" + id)
 			.then(function(result) {
 				if (val) {
-					$("#user_rating_" + id).html(val);
+					$("#user_rating_" + id).html(parseInt(val) ? val : "?");
 					// makeSlider(self);
 					return;
 				}

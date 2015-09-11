@@ -15,6 +15,20 @@
         height: 5px;
         // top: 18px;
         width: 100%;
+        margin-top: 5px;
+    }
+
+    .slider-background-vert {
+        width: 10%;
+        height: 10px;
+        float: left;
+        box-sizing: border-box;
+        border-right: 2px @green solid;
+        margin-top: -5px;
+    }
+
+    .slider-background-vert-first {
+        border-left: 2px @green solid;
     }
 
     .slider-background-container {
@@ -22,17 +36,21 @@
     }
 
     .slider-icon {
+        background-image: url(/images/ball1.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 40px 40px;
     	font-size: 25px;
-    	border: 1px #444 solid;
+    	// border: 1px #444 solid;
     	width: 40px;
     	height: 40px;
-        border-radius: 20px;
+        // border-radius: 20px;
     	text-align: center;
 		line-height: 40px;
 		margin-top: 0px;
 		position: absolute;
 		cursor: ew-resize;
-		background-color: @gold;
-		color: @green;
+		// background-color: @gold;
+		// color: @green;
     }
 }

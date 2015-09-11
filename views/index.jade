@@ -18,8 +18,18 @@ block content
 								td.rating-description
 									.numberpicker1
 										.slider.slider-icon(id="slider_#{player.id}",data-id="#{player.id}",data-val="#{player.user_rating}")
-											i.fa.fa-arrows-h
+											//- i.fa.fa-arrows-h
 										.slider-background-container
+											.slider-background-vert.slider-background-vert-first
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
+											.slider-background-vert
 											.slider-background
 								td.rating(id="user_rating_#{player.id}")= player.user_rating
 							tr.avg_rating
