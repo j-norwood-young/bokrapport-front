@@ -28,6 +28,7 @@ if (!Array.prototype.find) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+	console.log("User", req.user);
 	console.log("Session", req.session);
 	var game = null;
 	var rapport_results = null;
@@ -59,7 +60,7 @@ router.get('/', function(req, res, next) {
 				return avg_result.player_id == rapport_result.player_id;
 			});
 			if (tmp) {
-				rapport_result.avg_rating = tmp.rating;
+				rapport_result.avg_rating = Math.round(tmp.rating);
 			} else {
 				rapport_result.avg_rating = 0;
 			}
@@ -76,7 +77,7 @@ router.get('/', function(req, res, next) {
 			} else {
 				rapport_result.user_rating = 0;
 			}
-			console.log(rapport_result);
+			// console.log(rapport_result);
 			return rapport_result;
 		});
 		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("d MMM YYYY");

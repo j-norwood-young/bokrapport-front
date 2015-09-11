@@ -1,13 +1,7 @@
 // var jquery = require("jquery");
 var Q = require("q");
+var utils = require("./utils");
 
-function hasLocalStorage() {
-	try {
-		return 'localStorage' in window && window['localStorage'] !== null;
-	} catch (e) {
-		return false;
-	}
-}
 
 $(function() {
 	var facebook_id = null;
@@ -16,7 +10,7 @@ $(function() {
 	var makeSlider = function(sender) {
 		var self = this;
 		var offset = 0;
-		console.log(self);
+		// console.log(self);
 		var width = $(self).width();
 		var maxx = $(self).parent().width() - width;
 		$(self).css("left", $(self).parent().position().left);
@@ -40,7 +34,7 @@ $(function() {
 			onDragEnd: function(el, x) {
 				var val = Math.round((x - left) / maxx * 10);
 				var gameId = $("#game_data").data("game-id");
-				if (hasLocalStorage()) {
+				if (utils.hasLocalStorage()) {
 					localStorage.setItem("rating-" + gameId + "." + id, val);
 				}
 				$.post("/api/rate", { game_id: gameId, player_id: id, rating: val })
@@ -48,9 +42,9 @@ $(function() {
 					return $.get("/api/rating/avg/" + gameId + "/" + id);
 				})
 				.then(function(result) {
-					console.log($("#avg_rating_" + result.player_id));
-					$("#avg_rating_" + result.player_id).html(result.rating);
-					console.log(result);
+					// console.log($("#avg_rating_" + result.player_id));
+					$("#avg_rating_" + result.player_id).html(Math.round(result.rating));
+					// console.log(result);
 				});
 			}
 		}).set(left + offset, top);
@@ -58,7 +52,7 @@ $(function() {
 	}
 
 	var setSlider = function(self, val) {
-		console.log(self);
+		// console.log(self);
 		var width = $(self).width();
 		var maxx = $(self).parent().width() - width;
 		offset = Math.round(maxx / 10 * val);
@@ -76,9 +70,9 @@ $(function() {
 			var self = this;
 			var gameId = $("#game_data").data("game-id");
 			var id = $(this).data("id");
-			console.log("Checking slider", gameId, id);
+			// console.log("Checking slider", gameId, id);
 			var val = 0;
-			if (hasLocalStorage()) {
+			if (utils.hasLocalStorage()) {
 				val = localStorage.getItem("rating-" + gameId + "." + id);
 				if (val) {
 					$("#user_rating_" + id).html(parseInt(val) ? val : "?");
@@ -158,14 +152,14 @@ $(function() {
 
 
 
-(function(d, s, id){
-	var js, fjs = d.getElementsByTagName(s)[0];
-	if (d.getElementById(id)) {return;}
-	js = d.createElement(s); js.id = id;
-	js.src = "//connect.facebook.net/en_US/sdk.js";
-	fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+// (function(d, s, id){
+// 	var js, fjs = d.getElementsByTagName(s)[0];
+// 	if (d.getElementById(id)) {return;}
+// 	js = d.createElement(s); js.id = id;
+// 	js.src = "//connect.facebook.net/en_US/sdk.js";
+// 	fjs.parentNode.insertBefore(js, fjs);
+// }(document, 'script', 'facebook-jssdk'));
 
-$(function() {
+// $(function() {
 	
-});
+// });

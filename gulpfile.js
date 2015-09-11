@@ -84,6 +84,7 @@ gulp.task('css', function() {
 	return gulp.src([lessInputFile])
 		.pipe(less())
 		.pipe(prefix({ cascade: true }))
+		.pipe(minifyCSS())
 		.pipe(rename(projectName + ".css"))
 		.pipe(gulp.dest(developmentDir + cssOutputDir))
 		.pipe(notify({ message: 'Built CSS'}));

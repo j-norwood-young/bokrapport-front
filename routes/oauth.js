@@ -45,7 +45,7 @@ router.route("/callback/:provider").get(function(req, res) {
 		});
 	}, function(err) {
 		console.log("Error!", err);
-		res.render("error", { message: err.error.message || "Something fucked up", error: err});
+		res.render("error", { message: err.error.message || "Something went wrong", error: err});
 	});
 });
 
