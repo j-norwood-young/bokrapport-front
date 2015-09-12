@@ -14,6 +14,17 @@ router.post("/login", function(req, res) {
 
 router.post("/rate", function(req, res) {
 	var rating = req.body.rating;
+	if (rating < 1) {
+		mysql.remove("player_rating", { player_id: req.body.player_id, game_id: req.body.game_id, user_id: req.session.userId })
+		.then(function(result) {
+			res.send(result);
+			return;
+		});
+	}
+	if (rating > 10) {
+		res.send("Rating cannot be greater than 10");
+		return;
+	}
 	console.log("UserID", req.session.userId);
 	mysql.upsert("player_rating", { player_id: req.body.player_id, game_id: req.body.game_id, user_id: req.session.userId }, { player_id: req.body.player_id, game_id: req.body.game_id, user_id: req.session.userId, rating: req.body.rating, timestamp: moment().format("YYYY-MM-DD HH:mm:ss") })
 	.then(function(result) {
