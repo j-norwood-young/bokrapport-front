@@ -28,7 +28,7 @@ if (!Array.prototype.find) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	console.log("User", req.user);
+	console.log("User", res.locals.userId);
 	console.log("Session", req.session);
 	var game = null;
 	var rapport_results = null;

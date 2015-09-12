@@ -3,6 +3,39 @@ var router = express.Router();
 var config = require('../config');
 var social = require('../lib/social');
 var mysql = require("../lib/mysql");
+var q = require("q");
+
+
+var mergeUser = function(targetId, sourceId) {
+	var deferred = q.defer();
+	// SELECT * FROM (SELECT * FROM `player_rating` WHERE user_id = 1 OR user_id = 21 ORDER BY timestamp DESC) AS t1 GROUP BY game_id, player_id
+	mysql.query("SELECT id FROM (SELECT * FROM (SELECT * FROM `player_rating` WHERE user_id = ? OR user_id = ? ORDER BY timestamp DESC) AS t1 GROUP BY game_id, player_id) AS t2 WHERE user_id <> ?", [targetId, sourceId, targetId ])
+	.then(function(result) {
+		var ids = result.map(function(id) {
+			return id.id;
+		});
+		if (ids.length) {
+			return mysql.query("UPDATE player_rating SET user_id = ? WHERE id IN (" + ids.join(",") + ")", [ targetId ])
+		} else {
+			return true;
+		}
+	})
+	.then(function(result) {
+		return mysql.remove("player_rating", { user_id: sourceId })
+	})
+	.then(function(result) {
+		return mysql.remove("user", { id: sourceId })
+	})
+	.then(function(result) {
+		console.log("All done!");
+		deferred.resolve(result);
+	}, function(err) {
+		console.log("Error", err);
+		deferred.reject(err);
+	})
+	
+	return deferred.promise;
+}
 
 router.route("/auth/:provider").get(function(req, res) {
 	var data = social.auth(req.params.provider);
@@ -10,40 +43,36 @@ router.route("/auth/:provider").get(function(req, res) {
 });
 
 router.route("/callback/:provider").get(function(req, res) {
+	var fbData = {};
 	console.log("Got callback", req.query);
 	social.callback(req.params.provider, req.query.code)
 	.then(function(result) {
-		req.session.user = result;
-		req.session.user.admin = false;
-		mysql.getOne("users", { facebook_id : result.id })
-		.then(function(sqluser) {
-			console.log("sqluser", sqluser);
-			if (!sqluser) {
-				return mysql.insert("users", { 
-					facebook_id: result.id,
-					firstname: result.first_name,
-					surname: result.last_name,
-					email: result.email,
-					picture: result.picture.data.url,
-					token: result.token.access_token,
-					age_range: result.age_range.min,
-					last_login: new Date(),
-				});
-			} else {
-				console.log(sqluser.id);
-				if (sqluser.admin) {
-					req.session.user.admin = true;
-				}
-				return mysql.update("users", sqluser.id, { last_login: new Date(), token: result.token.access_token });
-			}
-		})
-		.then(function() {
-			res.send(result);
-		}, function(err) {
-			console.log("Err", err);
-			res.error("Unable to login");
+		fbData = result;
+		return mysql.getOne("user", { facebook_id: fbData.id })
+	})
+	.then(function(result) {
+		if (result) {
+			// User already exists but has another User ID. Now we have a problem...
+			return mergeUser(req.session.userId, result.id);
+		}
+		return true;
+	})
+	.then(function() {
+		console.log("Updating user");
+		return mysql.update("user", { id: req.session.userId }, { 
+			facebook_id: fbData.id,
+			firstname: fbData.first_name,
+			surname: fbData.last_name,
+			email: fbData.email,
+			picture: fbData.picture.data.url,
+			token: fbData.token.access_token,
+			age_range: fbData.age_range.min,
 		});
-	}, function(err) {
+	})
+	.then(function(result) {
+		res.redirect("/");
+	})
+	.then(null, function(err) {
 		console.log("Error!", err);
 		res.render("error", { message: err.error.message || "Something went wrong", error: err});
 	});
