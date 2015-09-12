@@ -2,9 +2,7 @@
 var Q = require("q");
 var utils = require("./utils");
 
-
 $(function() {
-	var facebook_id = null;
 	//Draggable Slider
 	var draggables = [];
 	var makeSlider = function(sender) {
@@ -39,6 +37,16 @@ $(function() {
 				}
 				$.post("/api/rate", { game_id: gameId, player_id: id, rating: val })
 				.then(function(result) {
+					if (ws) {
+						ws.send(JSON.stringify({
+							isVote: true,
+							game_id: gameId,
+							player_id: id,
+							rating: val,
+							user_id: userId,
+							picture: picture
+						}));
+					}
 					return $.get("/api/rating/avg/" + gameId + "/" + id);
 				})
 				.then(function(result) {
@@ -94,72 +102,37 @@ $(function() {
 	$(window).on("resize", makeSliders);
 
 	makeSliders();
-	setVals();	
-	
-	//Facebook
-	window.fbAsyncInit = function() {
-		FB.init({
-			appId      : '882901835078866',
-			xfbml      : true,
-			version    : 'v2.4'
-		});
-		//FB Login
-		FB.getLoginStatus(function(response) {
-			if (response.status === 'connected') {
-				console.log('Logged in.', response);
-				console.log(response);
-				userId = response.authResponse.userId;
-				afterLogin();
+	setVals();
+
+	var ws = null;
+	var x =0;
+	//Websocket
+	if (gameId) {
+		console.log("Trying to open socket");
+		ws = new WebSocket("ws://bokrapport.dev:3111/game/" + gameId);
+		ws.onmessage = function(ev) {
+			try {
+				var data = JSON.parse(ev.data);
+				console.log(data);
+				if (data.player_id) {
+					console.log("Caught player", data.player_id);
+					var playerEl = $("#player_" + data.player_id);
+					playerEl.find(".avg_rating > .rating-description").find("[data-user-id=" + data.user_id + "]").remove();
+					playerEl.find(".avg_rating > .rating-description > .profilePic").slice(0, -4).remove();
+					if (data.picture) {
+						var s = "<div class='profilePic' data-user-id='" + data.user_id + "' style='background-image: url(" + data.picture + ")'>" + data.rating + "</div>";
+					} else {
+						var s = "<div class='profilePic' data-user-id='" + data.user_id + "'>" + data.rating + "</div>";
+					}
+					playerEl.find(".avg_rating > .rating-description").append(s);
+					// .find(".rating-description").html(ev.data.picture);
+				}
+			} catch(e) {
+				console.log("Not JSON, ignoring");
 			}
-			// fbLogin();
-		});
-	};
-
-	var afterLogin = function() {
-		FB.api('/me?fields=id,first_name,last_name,picture,email', function(response) {
-			$.post("/api/login", { firstname: response.first_name, surname: response.last_name, picture: response.picture.data.url, facebook_id: response.id, email: response.email })
-			.then(function(result) {
-				$(window).data("userId", result.id);
-			});
-		});
-		FB.api('me/friends', function(response) {
-			console.log("Friends", response);
-		})
-	}
-
-	var fbLogin = function() {
-		
-		if (!userId) {
-			FB.login(function(response) {
-				facebook_id = response.authResponse.userId;
-				afterLogin();
-			}, { scope: 'user_friends' });
-			return;
+		};
+		ws.onopen = function(ev) {
+			ws.send(JSON.stringify({ setData: "Yo" }));
 		}
-		afterLogin();
 	}
-
-	// $(".fb-btn").on("click", function() {
-	// 	if (!userId) {
-	// 		fbLogin();
-	// 		return;
-	// 	}
-
-	// });
 });
-
-
-
-
-
-// (function(d, s, id){
-// 	var js, fjs = d.getElementsByTagName(s)[0];
-// 	if (d.getElementById(id)) {return;}
-// 	js = d.createElement(s); js.id = id;
-// 	js.src = "//connect.facebook.net/en_US/sdk.js";
-// 	fjs.parentNode.insertBefore(js, fjs);
-// }(document, 'script', 'facebook-jssdk'));
-
-// $(function() {
-	
-// });

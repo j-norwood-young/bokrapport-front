@@ -3,8 +3,7 @@
 	.container
 		.navbar-header
 			if fbLoggedIn
-				.myProfilePic
-					img(src=user.picture)
+				.profilePic(style="background-image:url(" + user.picture + ")")
 			else
 				a#fb.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
 					i.fa.fa-facebook

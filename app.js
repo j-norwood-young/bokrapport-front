@@ -7,11 +7,8 @@ var bodyParser = require('body-parser');
 // var session = require('express-session');
 var cookieSession = require('cookie-session');
 var session = require("./lib/session");
-
 var config = require("./config");
-
 var routes = require('./routes/index');
-
 var app = express();
 
 // view engine setup
@@ -38,7 +35,7 @@ app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  var err = new Error('Bladsy Nie Gevind Nie');
   err.status = 404;
   next(err);
 });

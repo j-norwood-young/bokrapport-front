@@ -38,6 +38,7 @@ router.get('/', function(req, res, next) {
 	mysql.query("SELECT game.*, UNIX_TIMESTAMP(game.date_time) AS utime, venue.name AS venue_name, venue.city FROM `game` JOIN venue ON venue.id = game.venue_id WHERE date_time < NOW() ORDER BY date_time DESC LIMIT 1")
 	.then(function(result) {
 		game = result.pop();
+		res.locals.game_id = game.id;
 		return mysql.query("SELECT country.*, country_game.score FROM country_game JOIN country ON country_game.country_id = country.id WHERE country_game.game_id = ?", game.id);
 	})
 	.then(function(result) {

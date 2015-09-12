@@ -1,4 +1,10 @@
 block javascript
+	if (game_id)
+		script
+			| var gameId = #{game_id};
+			| var userId = #{userId};
+			| var picture = "#{user.picture}";
+
 	script(src="/jquery.min.js")
 	script(src="/development/js/bootstrap.js")
 	script(src="/draggable.min.js")

@@ -9,7 +9,7 @@ block content
 		.row.players
 			each player in players
 				.col-xs-12.col-md-6
-					.player
+					.player(id="player_"+player.id)
 						.player-identity
 							img(src="/uploads/#{player.photo}")
 							.name #{player.firstname} #{player.surname}
@@ -34,7 +34,7 @@ block content
 								td.rating(id="user_rating_#{player.id}")= player.user_rating
 							tr.avg_rating
 								td.rating-description
-									i.fa.fa-users
+									
 								td.rating(id="avg_rating_#{player.id}")= player.avg_rating
 							tr.rapport_rating
 								td.rating-description
