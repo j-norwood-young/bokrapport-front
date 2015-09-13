@@ -1,0 +1,29 @@
+#game_data.dateline(data-game-id="#{game.id}")
+	.row
+		if (showUser && showUser.facebook_id)
+			.col-xs-3
+				.showUser
+					img(src=showUser.picture)
+					.name #{showUser.firstname} #{showUser.surname}
+		.col-xs-9
+			.row
+				.col-xs-10
+					.venue #{game.venue_name}, #{game.city}
+					.datetime= game.utime
+			.row
+				.col-xs-10
+					.dropdown#calendar
+						button.btn.dropdown-toggle(data-toggle="dropdown",aria-haspopup="true",aria-expanded="false")
+							i.fa.fa-calendar
+						ul.dropdown-menu(aria-labelledby="calendar")
+							each g in games
+								li
+									a(href="/game/#{g.id}")
+										= g.countries[0].name
+										| /
+										= g.countries[1].name
+										|  (#{g.utime})
+					.teams #{countries[0].name} - #{countries[1].name}
+					//- if (!showUser)
+					//- 	a.btn.btn-warning.pull-right(href="/share/#{game.id}")
+					//- 		i.fa.fa-share

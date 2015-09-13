@@ -47,6 +47,7 @@ router.route("/callback/:provider").get(function(req, res) {
 	console.log("Got callback", req.query);
 	social.callback(req.params.provider, req.query.code)
 	.then(function(result) {
+		console.log(result);
 		fbData = result;
 		return mysql.getOne("user", { facebook_id: fbData.id })
 	})
@@ -58,6 +59,12 @@ router.route("/callback/:provider").get(function(req, res) {
 		return true;
 	})
 	.then(function() {
+		console.log("https://graph.facebook.com/" + fbData.id + "/picture?width=200&height=200&redirect=false&access_token=" + fbData.token.access_token);
+		return social.call("https://graph.facebook.com/" + fbData.id + "/picture?width=100&height=100&redirect=false&access_token=" + fbData.token.access_token);
+	})
+	.then(function(result) {
+		console.log("Picture", result);
+		fbData.picture = result;
 		console.log("Updating user");
 		return mysql.update("user", { id: req.session.userId }, { 
 			facebook_id: fbData.id,

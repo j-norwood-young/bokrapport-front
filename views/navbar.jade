@@ -1,11 +1,12 @@
 // Fixed navbar
 .navbar.navbar-default(role='navigation')
 	.container
-		.navbar-header
+		div
 			if fbLoggedIn
 				.profilePic(style="background-image:url(" + user.picture + ")")
 			else
 				a#fb.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
 					i.fa.fa-facebook
+			<div class="fb-share-button" data-href="https://bokrapport.com" data-layout="button"></div>
 			a.navbar-brand(href='/')
 				img(src="/images/bokrapport.png")

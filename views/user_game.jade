@@ -1,0 +1,16 @@
+extends layout
+
+block content
+	.container
+		include dateline
+		.row.players
+			each player in players
+				.col-xs-12.col-md-6
+					.player(id="player_"+player.id)
+						.player-identity
+							img(src="/uploads/#{player.photo}")
+							.name #{player.firstname} #{player.surname}
+						table.ratings
+							tr.user_rating
+								td.rating(id="user_rating_#{player.id}",style="height:220px;font-size:100px")= player.user_rating
+						br(style="clear:both")

@@ -3,3 +3,4 @@ public/*
 config.js
 admin/config.json
 admin/users.json
+.DS_Store
