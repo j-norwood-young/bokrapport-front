@@ -8,7 +8,7 @@
 		.col-xs-9
 			.row
 				.col-xs-10
-					.venue #{game.venue_name}, #{game.city}
+					.venue #{game.venue_name}
 					.datetime= game.utime
 			.row
 				.col-xs-10
@@ -19,9 +19,7 @@
 							each g in games
 								li
 									a(href="/game/#{g.id}")
-										= g.countries[0].name
-										| /
-										= g.countries[1].name
+										= g.headline
 										|  (#{g.utime})
 					.teams #{countries[0].name} - #{countries[1].name}
 					//- if (!showUser)
