@@ -3,6 +3,11 @@ extends layout
 block content
 	.container
 		include dateline
-		.row.players
-			each player in players
-				include player
+		if game.live
+			.row.players
+				each player in players
+					include player
+		else
+			.alert.alert-info
+				strong Too Early
+				|  Sorry, this game isn't live yet. Please check back about 10 minutes before the end of the match.

@@ -39,18 +39,26 @@
         background-image: url(/images/ball1.png);
         background-position: center;
         background-repeat: no-repeat;
-        background-size: 40px 40px;
+        background-size: 60px 60px;
     	font-size: 25px;
     	// border: 1px #444 solid;
-    	width: 40px;
-    	height: 40px;
+    	width: 60px;
+    	height: 60px;
         // border-radius: 20px;
     	text-align: center;
 		line-height: 40px;
 		margin-top: 0px;
 		position: absolute;
 		cursor: ew-resize;
+        margin-top: -10px !important;
+        animation: pulsate 5s infinite;
 		// background-color: @gold;
 		// color: @green;
     }
+}
+
+@keyframes pulsate {
+    0% {transform: scale(1, 1);}
+    50% {transform: scale(1.2, 1.2);}
+    100% {transform: scale(1, 1);}
 }
