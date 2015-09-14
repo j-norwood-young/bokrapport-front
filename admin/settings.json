@@ -86,6 +86,22 @@
                 "editview": {
                     "show": false
                 }
+            },
+            {
+                "name": "picture",
+                "verbose": "picture",
+                "control": {
+                    "file": true
+                },
+                "type": "varchar(255)",
+                "allowNull": true,
+                "defaultValue": null,
+                "listview": {
+                    "show": false
+                },
+                "editview": {
+                    "show": true
+                }
             }
         ],
         "mainview": {
@@ -250,22 +266,6 @@
                 }
             },
             {
-                "name": "blurb",
-                "verbose": "blurb",
-                "control": {
-                    "text": true
-                },
-                "type": "text",
-                "allowNull": false,
-                "defaultValue": null,
-                "listview": {
-                    "show": true
-                },
-                "editview": {
-                    "show": true
-                }
-            },
-            {
                 "name": "timestamp",
                 "verbose": "timestamp",
                 "control": {
@@ -325,6 +325,26 @@
                     "columns": [
                         "name"
                     ]
+                }
+            },
+            {
+                "name": "live",
+                "verbose": "live",
+                "control": {
+                    "radio": true,
+                    "options": [
+                        "True",
+                        "False"
+                    ]
+                },
+                "type": "tinyint(1)",
+                "allowNull": false,
+                "defaultValue": "0",
+                "listview": {
+                    "show": true
+                },
+                "editview": {
+                    "show": true
                 }
             }
         ],
@@ -389,6 +409,22 @@
                     "text": true
                 },
                 "type": "varchar(100)",
+                "allowNull": false,
+                "defaultValue": null,
+                "listview": {
+                    "show": true
+                },
+                "editview": {
+                    "show": true
+                }
+            },
+            {
+                "name": "common_name",
+                "verbose": "common name",
+                "control": {
+                    "text": true
+                },
+                "type": "varchar(255)",
                 "allowNull": false,
                 "defaultValue": null,
                 "listview": {
@@ -1106,10 +1142,10 @@
                 "allowNull": false,
                 "defaultValue": null,
                 "listview": {
-                    "show": true
+                    "show": false
                 },
                 "editview": {
-                    "show": true
+                    "show": false
                 }
             },
             {
@@ -1154,10 +1190,10 @@
                 "allowNull": false,
                 "defaultValue": null,
                 "listview": {
-                    "show": true
+                    "show": false
                 },
                 "editview": {
-                    "show": true
+                    "show": false
                 }
             },
             {
@@ -1186,10 +1222,10 @@
                 "allowNull": false,
                 "defaultValue": "0",
                 "listview": {
-                    "show": true
+                    "show": false
                 },
                 "editview": {
-                    "show": true
+                    "show": false
                 }
             },
             {
@@ -1202,10 +1238,10 @@
                 "allowNull": false,
                 "defaultValue": "CURRENT_TIMESTAMP",
                 "listview": {
-                    "show": true
+                    "show": false
                 },
                 "editview": {
-                    "show": true
+                    "show": false
                 }
             }
         ],
@@ -1264,7 +1300,7 @@
                 "name": "start_date",
                 "verbose": "start_date",
                 "control": {
-                    "text": true
+                    "date": true
                 },
                 "type": "date",
                 "allowNull": false,
@@ -1280,7 +1316,7 @@
                 "name": "end_date",
                 "verbose": "end_date",
                 "control": {
-                    "text": true
+                    "date": true
                 },
                 "type": "date",
                 "allowNull": false,
@@ -1301,6 +1337,22 @@
                 "type": "timestamp",
                 "allowNull": false,
                 "defaultValue": "CURRENT_TIMESTAMP",
+                "listview": {
+                    "show": false
+                },
+                "editview": {
+                    "show": false
+                }
+            },
+            {
+                "name": "picture",
+                "verbose": "picture",
+                "control": {
+                    "file": true
+                },
+                "type": "varchar(255)",
+                "allowNull": true,
+                "defaultValue": "",
                 "listview": {
                     "show": true
                 },
