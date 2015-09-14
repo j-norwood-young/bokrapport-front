@@ -96,7 +96,7 @@ var game = function(id, userId) {
 
 var latestGame = function(userId) {
 	var deferred = Q.defer();
-	mysql.query("SELECT game.id FROM `game` WHERE date_time < NOW() ORDER BY date_time DESC LIMIT 1")
+	mysql.query("SELECT game.id FROM `game` WHERE date_time < NOW() AND live=1 ORDER BY date_time DESC LIMIT 1")
 	.then(function(result) {
 		return game(result[0].id, userId);
 	})
