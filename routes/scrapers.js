@@ -52,17 +52,18 @@ router.get("/players", function(req, res, next) {
 	scraper.fetch(url)
 	.then(function(result) {
 		var player_urls = [];
+		var player_common_names = {};
 		var $ = cheerio.load(result);
 		var rows = $(".table-width-full").find("tr");
 		// console.log(rows);
 		rows.each(function(i, row) {
 			player_urls.push($(this).find("td").find("a").attr("href"));
+			player_common_names[$(this).find("td").find("a").attr("href")] = $(this).find("td").find("a").html();
 		});
 		player_urls.shift();
 		console.log("Player count", player_urls.length);
 		// player_urls = shuffle(player_urls);
-		// player_urls = player_urls.slice(0, 3);
-		mysql.get("player")
+		mysql.query("SELECT * FROM player WHERE last_scrape > now() - INTERVAL 1 DAY")
 		.then(function(result) {
 			for(var i = 0; i < player_urls.length; i++) {
 				result.forEach(function(player) {
@@ -72,6 +73,7 @@ router.get("/players", function(req, res, next) {
 				});
 			}
 			console.log("Remainging player count", player_urls.length);
+			player_urls = player_urls.slice(0, 3);
 			var worker = setInterval(function() {
 				if (!player_urls.length) {
 					clearInterval(worker);
@@ -80,9 +82,10 @@ router.get("/players", function(req, res, next) {
 				var player_url = player_urls.shift();
 				mysql.getOne("player", { saru_url: player_url })
 				.then(function(result) {
+					var isUpdate = false;
 					if (result) {
-						console.log("Skipping", result.firstname + " " + result.surname);
-						return true;
+						isUpdate = result.id;
+						// return true;
 					}
 					console.log("Fetching", player_url);
 					scraper.fetch("http://www.sarugby.net" + player_url)
@@ -105,10 +108,17 @@ router.get("/players", function(req, res, next) {
 						stats.weight = parseInt(stats.weight);
 						stats.position = $(".player-career-rugby").find("table").first().find("tr").next().find("td").next().html().trim();
 						stats.province = $(".player-career-rugby").find("table").first().find("tr").next().next().find("td").next().html().trim();
-						stats.photo = $(".player-single-img").find("img").attr("src");
+						// stats.photo = $(".player-single-img").find("img").attr("src");
 						stats.caps = $(".player-career-springbok").find("table").first().find("tr").next().find("td").next().html().trim();
+						stats.common_name = player_common_names[player_url];
 						console.log(stats);
-						mysql.insert("player", stats);
+						if (isUpdate) {
+							console.log("Updating", result.firstname + " " + result.surname);
+							mysql.update("player", { id: isUpdate }, stats);
+						} else {
+							console.log("Inserting", result.firstname + " " + result.surname);
+							mysql.insert("player", stats);
+						}
 					});
 				}, function(err) {
 					console.log("Error", err);

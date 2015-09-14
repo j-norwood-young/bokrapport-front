@@ -39,7 +39,7 @@ var game = function(id, userId) {
 	})
 	.then(function(result) {
 		countries = result;
-		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id, player.firstname, player.surname, player.photo, player.position, player.id FROM player_rating JOIN player ON player_rating.player_id = player.id WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
+		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id, player.common_name, player.firstname, player.surname, player.photo, player.position, player.id FROM player_rating JOIN player ON player_rating.player_id = player.id WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
 	})
 	.then(function(result) {
 		rapport_results = result;

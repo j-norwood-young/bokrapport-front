@@ -23,7 +23,10 @@
 						td.rating(id="user_rating_#{player.id}")= player.user_rating
 		.player-identity
 			img(src="/uploads/#{player.photo}")
-			.name #{player.firstname} #{player.surname}
+			if player.common_name
+				.name= player.common_name
+			else
+				.name #{player.firstname} #{player.surname}
 		table.ratings
 			tr.avg_rating
 				td.rating-description
