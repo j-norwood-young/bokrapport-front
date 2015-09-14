@@ -8,6 +8,7 @@ var q = require("q");
 
 var mergeUser = function(targetId, sourceId) {
 	var deferred = q.defer();
+	var uid = null;
 	// SELECT * FROM (SELECT * FROM `player_rating` WHERE user_id = 1 OR user_id = 21 ORDER BY timestamp DESC) AS t1 GROUP BY game_id, player_id
 	mysql.query("SELECT id FROM (SELECT * FROM (SELECT * FROM `player_rating` WHERE user_id = ? OR user_id = ? ORDER BY timestamp DESC) AS t1 GROUP BY game_id, player_id) AS t2 WHERE user_id <> ?", [targetId, sourceId, targetId ])
 	.then(function(result) {
@@ -24,7 +25,14 @@ var mergeUser = function(targetId, sourceId) {
 		return mysql.remove("player_rating", { user_id: sourceId })
 	})
 	.then(function(result) {
+		return mysql.getOne("user", sourceId)
+	})
+	.then(function(result) {
+		uid = result.unique_id;
 		return mysql.remove("user", { id: sourceId })
+	})
+	.then(function(result) {
+		return mysql.update("user", { id: targetId }, { unique_id: uid });
 	})
 	.then(function(result) {
 		console.log("All done!");
