@@ -34,6 +34,10 @@ var game = function(id, userId) {
 	var countries = null;
 	mysql.query("SELECT game.*, UNIX_TIMESTAMP(game.date_time) AS utime, venue.name AS venue_name, venue.city FROM `game` JOIN venue ON venue.id = game.venue_id WHERE game.id = ? ORDER BY date_time DESC LIMIT 1", [ id ])
 	.then(function(result) {
+		if (!result.length) {
+			deferred.reject(new Error("Not found"));
+			return;
+		}
 		game = result.pop();
 		return mysql.query("SELECT country.*, country_game.score FROM country_game JOIN country ON country_game.country_id = country.id WHERE country_game.game_id = ?", game.id);
 	})

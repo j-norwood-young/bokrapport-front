@@ -51,7 +51,6 @@ router.get('/', function(req, res, next) {
 router.get("/game/:id", function(req, res, next) {
 	var games = null;
 	var game = null;
-	console.log("User", req.user);
 	gameModel.game(req.params.id, req.session.userId)
 	.then(function(result) {
 		game = result;
@@ -66,6 +65,7 @@ router.get("/game/:id", function(req, res, next) {
 	})
 	.then(null, function(err) {
 		console.log("Error", err);
+		res.render("error", err);
 	});
 });
 
