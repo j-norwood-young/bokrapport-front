@@ -29,6 +29,7 @@ var game = function(id, userId) {
 	var deferred = Q.defer();
 	var game = null;
 	var rapport_results = null;
+	var players = null;
 	var user_results = null;
 	var avg_results = null;
 	var countries = null;
@@ -43,7 +44,11 @@ var game = function(id, userId) {
 	})
 	.then(function(result) {
 		countries = result;
-		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id, player.common_name, player.firstname, player.surname, player.photo, player.position, player.id FROM player_rating JOIN player ON player_rating.player_id = player.id WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
+		return mysql.query("SELECT player.common_name, player.firstname, player.surname, player.photo, player.position, player.id FROM game_player JOIN player ON player.id = game_player.player_id WHERE game_player.game_id = ? ORDER BY game_player.sort_order DESC", game.id);
+	})
+	.then(function(result) {
+		players = result;
+		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id FROM player_rating WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
 	})
 	.then(function(result) {
 		rapport_results = result;
@@ -56,32 +61,32 @@ var game = function(id, userId) {
 	.then(function(result) {
 		avg_results = result;
 		//Combine our averages with Rapport score
-		players = rapport_results.map(function(rapport_result) {
-			var tmp = avg_results.find(function(avg_result) {
-				return avg_result.player_id == rapport_result.player_id;
-			});
-			if (tmp) {
-				rapport_result.avg_rating = Math.round(tmp.rating);
-			} else {
-				rapport_result.avg_rating = 0;
-			}
-			if (user_results) {
-				console.log("User results", user_results);
-				var tmp = user_results.find(function(user_result) {
-					return user_result.player_id == rapport_result.player_id;
-				});
-				if (tmp) {
-					rapport_result.user_rating = tmp.rating;
-				} else {
-					rapport_result.user_rating = 0;	
-				}
-			} else {
-				rapport_result.user_rating = 0;
-			}
-			return rapport_result;
-		});
+		// players = rapport_results.map(function(rapport_result) {
+		// 	var tmp = avg_results.find(function(avg_result) {
+		// 		return avg_result.player_id == rapport_result.player_id;
+		// 	});
+		// 	if (tmp) {
+		// 		rapport_result.avg_rating = Math.round(tmp.rating);
+		// 	} else {
+		// 		rapport_result.avg_rating = 0;
+		// 	}
+		// 	if (user_results) {
+		// 		console.log("User results", user_results);
+		// 		var tmp = user_results.find(function(user_result) {
+		// 			return user_result.player_id == rapport_result.player_id;
+		// 		});
+		// 		if (tmp) {
+		// 			rapport_result.user_rating = tmp.rating;
+		// 		} else {
+		// 			rapport_result.user_rating = 0;	
+		// 		}
+		// 	} else {
+		// 		rapport_result.user_rating = 0;
+		// 	}
+		// 	return rapport_result;
+		// });
 		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("d MMM YYYY");
-		return mysql.query("SELECT player_rating.user_id, player_rating.player_id, player_rating.rating, player_rating.timestamp, user.picture FROM `player_rating` JOIN user ON user.id=user_id WHERE game_id = ? ORDER BY timestamp DESC", [ game.id ]);
+		return mysql.query("SELECT player_rating.user_id, player_rating.player_id, player_rating.rating, player_rating.timestamp, user.picture FROM `player_rating` JOIN user ON user.id=user_id WHERE game_id = ? ORDER BY timestamp DESC", game.id );
 	}).then(function(result) {
 		players.forEach(function(player) {
 			player.votes = result.filter(function(rating) {
