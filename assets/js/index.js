@@ -119,13 +119,14 @@ $(function() {
 					var playerEl = $("#player_" + data.player_id);
 					playerEl.find(".avg_rating > .rating-description").find("[data-user-id=" + data.user_id + "]").remove();
 					playerEl.find(".avg_rating > .rating-description > .profilePic").slice(0, -4).remove();
-					if (data.picture) {
-						var s = "<div class='profilePic' data-user-id='" + data.user_id + "' style='background-image: url(" + data.picture + ")'>" + data.rating + "</div>";
-					} else {
-						var s = "<div class='profilePic' data-user-id='" + data.user_id + "'>" + data.rating + "</div>";
+					if (data.rating) {
+						if (data.picture) {
+							var s = "<div class='profilePic' data-user-id='" + data.user_id + "' style='background-image: url(" + data.picture + ")'>" + data.rating + "</div>";
+						} else {
+							var s = "<div class='profilePic' data-user-id='" + data.user_id + "'>" + data.rating + "</div>";
+						}
+						playerEl.find(".avg_rating > .rating-description").append(s);
 					}
-					playerEl.find(".avg_rating > .rating-description").append(s);
-					// .find(".rating-description").html(ev.data.picture);
 				}
 			} catch(e) {
 				console.log("Not JSON, ignoring");
