@@ -16,7 +16,7 @@ wss.on('connection', function connection(ws) {
 		try {
 			var msg = JSON.parse(message);
 			console.log("JSON Parsed message", msg);
-			if (msg.isVote) {
+			if ((msg.isVote) && (msg.rating < 10)) {
 				console.log("Senging to clients", wss.clients.length);
 				wss.clients.forEach(function(targetWs) {
 					if (ws.upgradeReq.url == targetWs.upgradeReq.url) {
