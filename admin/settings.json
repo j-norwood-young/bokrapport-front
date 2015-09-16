@@ -109,7 +109,10 @@
         },
         "listview": {
             "order": {},
-            "page": 25
+            "page": 25,
+            "filter": [
+                "name"
+            ]
         },
         "editview": {
             "readonly": false
@@ -352,13 +355,16 @@
             "show": true
         },
         "listview": {
-            "order": {},
+            "order": {
+                "date_time": "desc"
+            },
             "page": 25
         },
         "editview": {
             "readonly": false,
             "manyToOne": {
-                "country_game": "game_id"
+                "country_game": "game_id",
+                "game_player": "game_id"
             }
         }
     },
@@ -1085,6 +1091,22 @@
                 }
             },
             {
+                "name": "unique_id",
+                "verbose": "unique_id",
+                "control": {
+                    "text": true
+                },
+                "type": "varchar(16)",
+                "allowNull": false,
+                "defaultValue": null,
+                "listview": {
+                    "show": true
+                },
+                "editview": {
+                    "show": true
+                }
+            },
+            {
                 "name": "facebook_id",
                 "verbose": "facebook_id",
                 "control": {
@@ -1250,7 +1272,13 @@
         },
         "listview": {
             "order": {},
-            "page": 25
+            "page": 25,
+            "filter": [
+                "unique_id",
+                "email",
+                "firstname",
+                "surname"
+            ]
         },
         "editview": {
             "readonly": false
@@ -1457,6 +1485,115 @@
         },
         "listview": {
             "order": {},
+            "page": 25
+        },
+        "editview": {
+            "readonly": false
+        }
+    },
+    "game_player": {
+        "slug": "game_player",
+        "table": {
+            "name": "game_player",
+            "pk": "id",
+            "verbose": "game_player"
+        },
+        "columns": [
+            {
+                "name": "id",
+                "verbose": "id",
+                "control": {
+                    "text": true
+                },
+                "type": "int(11)",
+                "allowNull": false,
+                "defaultValue": null,
+                "listview": {
+                    "show": false
+                },
+                "editview": {
+                    "show": false
+                }
+            },
+            {
+                "name": "player_id",
+                "verbose": "player_id",
+                "control": {
+                    "select": true
+                },
+                "type": "int(11)",
+                "allowNull": false,
+                "defaultValue": null,
+                "listview": {
+                    "show": true
+                },
+                "editview": {
+                    "show": true
+                },
+                "oneToMany": {
+                    "table": "player",
+                    "pk": "id",
+                    "columns": [
+                        "common_name"
+                    ]
+                }
+            },
+            {
+                "name": "game_id",
+                "verbose": "game_id",
+                "control": {
+                    "text": true
+                },
+                "type": "int(11)",
+                "allowNull": false,
+                "defaultValue": null,
+                "listview": {
+                    "show": false
+                },
+                "editview": {
+                    "show": false
+                }
+            },
+            {
+                "name": "sort_order",
+                "verbose": "sort_order",
+                "control": {
+                    "text": true
+                },
+                "type": "int(11)",
+                "allowNull": false,
+                "defaultValue": null,
+                "listview": {
+                    "show": true
+                },
+                "editview": {
+                    "show": true
+                }
+            },
+            {
+                "name": "timestamp",
+                "verbose": "timestamp",
+                "control": {
+                    "text": true
+                },
+                "type": "timestamp",
+                "allowNull": false,
+                "defaultValue": "CURRENT_TIMESTAMP",
+                "listview": {
+                    "show": false
+                },
+                "editview": {
+                    "show": false
+                }
+            }
+        ],
+        "mainview": {
+            "show": false
+        },
+        "listview": {
+            "order": {
+                "sort_order": "asc"
+            },
             "page": 25
         },
         "editview": {
