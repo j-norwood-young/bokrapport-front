@@ -20,7 +20,11 @@
 									.slider-background-vert
 									.slider-background-vert
 									.slider-background
-						td.rating(id="user_rating_#{player.id}")= player.user_rating
+						td.rating(id="user_rating_#{player.id}")
+							if (player.user_rating)
+								= player.user_rating
+							else
+								| ?
 		.player-identity
 			img(src="/uploads/#{player.photo}")
 			if player.common_name
@@ -33,9 +37,17 @@
 					each vote in player.votes
 						.profilePic(data-user-id=vote.user_id style="background-image: url(#{vote.picture})")
 							=vote.rating
-				td.rating(id="avg_rating_#{player.id}")= player.avg_rating
+				td.rating(id="avg_rating_#{player.id}")
+					if (player.avg_rating)
+						= player.avg_rating
+					else
+						| ?
 			tr.rapport_rating
 				td.rating-description
 					img.rapport(src="/images/rapport.png")
-				td.rating= player.rating
+				td.rating
+					if (player.rating)
+						= player.rating
+					else
+						| ?
 		br(style="clear:both")
