@@ -59,6 +59,7 @@ var game = function(id, userId) {
 		return mysql.query("SELECT AVG(player_rating.rating) AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? AND player_rating.rating > 0 GROUP BY player_id", game.id);
 	})
 	.then(function(result) {
+		console.log("Result", result);
 		avg_results = result;
 		//Combine our averages with Rapport score
 		// players = rapport_results.map(function(rapport_result) {
@@ -88,11 +89,27 @@ var game = function(id, userId) {
 		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("D MMM YYYY");
 		return mysql.query("SELECT player_rating.user_id, player_rating.player_id, player_rating.rating, player_rating.timestamp, user.picture FROM `player_rating` JOIN user ON user.id=user_id WHERE game_id = ? AND player_rating.rating > 0 ORDER BY timestamp DESC", game.id );
 	}).then(function(result) {
+		console.log("Rapport", rapport_results);
 		players.forEach(function(player) {
 			player.votes = result.filter(function(rating) {
 				return rating.player_id == player.id;
 			}).slice(0, 5).reverse();
-		})
+
+			tmp = rapport_results.find(function(rating) {
+				return rating.player_id == player.id;
+			});
+			if (tmp) {
+				player.rapport_rating = tmp.rating;
+			}
+
+			tmp = avg_results.find(function(rating) {
+				return rating.player_id == player.id;
+			});
+			if (tmp) {
+				player.avg_rating = tmp.rating;
+			}
+		});
+		console.log(players);
 		deferred.resolve({ game: game, players: players, rapport_results: rapport_results, avg_results: avg_results, countries: countries, user_results: user_results });
 	})
 	.then(null, function(err) {
