@@ -90,10 +90,9 @@ var game = function(id, userId) {
 	}).then(function(result) {
 		players.forEach(function(player) {
 			player.votes = result.filter(function(rating) {
-				return rating.player_id == player.player_id;
+				return rating.player_id == player.id;
 			}).slice(0, 5).reverse();
 		})
-		// console.log(players);
 		deferred.resolve({ game: game, players: players, rapport_results: rapport_results, avg_results: avg_results, countries: countries, user_results: user_results });
 	})
 	.then(null, function(err) {
