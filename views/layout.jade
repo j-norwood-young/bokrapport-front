@@ -5,8 +5,10 @@ html
 		link(rel='stylesheet', href='/development/css/bokrapport.css')
 		link(rel="shortcut icon",href="/images/favicon.png")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
+		meta(property="og:title",content="#{game.headline}")
 	body
 		.bg-container
 		include navbar
-		block content
+		.content
+			block content
 		include js
