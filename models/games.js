@@ -48,15 +48,15 @@ var game = function(id, userId) {
 	})
 	.then(function(result) {
 		players = result;
-		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id FROM player_rating WHERE user_id = 1 AND game_id = ? GROUP BY player_rating.player_id", game.id);
+		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id FROM player_rating WHERE user_id = 1 AND game_id = ? AND player_rating.rating > 0 GROUP BY player_rating.player_id", game.id);
 	})
 	.then(function(result) {
 		rapport_results = result;
-		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? AND user_id = ?", [game.id, userId ]);
+		return mysql.query("SELECT player_rating.rating AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? AND user_id = ? AND player_rating.rating > 0", [game.id, userId ]);
 	})
 	.then(function(result) {
 		user_results = result;
-		return mysql.query("SELECT AVG(player_rating.rating) AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? GROUP BY player_id", game.id);
+		return mysql.query("SELECT AVG(player_rating.rating) AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? AND player_rating.rating > 0 GROUP BY player_id", game.id);
 	})
 	.then(function(result) {
 		avg_results = result;
