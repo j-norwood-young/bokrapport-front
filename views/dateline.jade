@@ -21,7 +21,7 @@
 									a(href="/game/#{g.id}")
 										= g.headline
 										|  (#{g.utime})
-					.teams #{countries[0].name} - #{countries[1].name}
+					.teams= game.headline
 					//- if (!showUser)
 					//- 	a.btn.btn-warning.pull-right(href="/share/#{game.id}")
 					//- 		i.fa.fa-share
