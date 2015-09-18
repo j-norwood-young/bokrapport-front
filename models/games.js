@@ -106,7 +106,7 @@ var game = function(id, userId) {
 				return rating.player_id == player.id;
 			});
 			if (tmp) {
-				player.avg_rating = tmp.rating;
+				player.avg_rating = Math.round(tmp.rating);
 			}
 		});
 		console.log(players);
