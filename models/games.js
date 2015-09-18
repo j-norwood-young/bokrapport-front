@@ -85,7 +85,7 @@ var game = function(id, userId) {
 		// 	}
 		// 	return rapport_result;
 		// });
-		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("d MMM YYYY");
+		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("D MMM YYYY");
 		return mysql.query("SELECT player_rating.user_id, player_rating.player_id, player_rating.rating, player_rating.timestamp, user.picture FROM `player_rating` JOIN user ON user.id=user_id WHERE game_id = ? ORDER BY timestamp DESC", game.id );
 	}).then(function(result) {
 		players.forEach(function(player) {
@@ -131,7 +131,7 @@ var games = function() {
 			});
 			if (!tmp) {
 				game.countries = [{ name: game.country_name, score: game.score }];
-				game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("ddd d MMM YYYY");
+				game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("ddd D MMM YYYY");
 				games.push(game);
 			} else {
 				tmp.countries.push({ name: game.country_name, score: game.score });
