@@ -44,6 +44,7 @@ router.get('/', function(req, res, next) {
 	})
 	.then(null, function(err) {
 		console.log("Error", err);
+		res.render("error", err);
 	});
 	// res.render('index', { title: 'BokRapport' });
 });
