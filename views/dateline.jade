@@ -1,17 +1,19 @@
 #game_data.dateline(data-game-id="#{game.id}")
 	.row
+		- var colWidth = 12
 		if (showUser && showUser.facebook_id)
+			- colWidth = 9
 			.col-xs-3
 				.showUser
 					img(src=showUser.picture)
 					.name #{showUser.firstname} #{showUser.surname}
-		.col-xs-9
+		div(id="col-xs-#{colWidth}")
 			.row
-				.col-xs-10
+				.col-xs-12
 					.venue #{game.venue_name}
 					.datetime= game.utime
 			.row
-				.col-xs-10
+				.col-xs-12
 					.dropdown#calendar
 						button.btn.dropdown-toggle(data-toggle="dropdown",aria-haspopup="true",aria-expanded="false")
 							i.fa.fa-calendar
@@ -23,7 +25,7 @@
 										|  (#{g.utime})
 					.teams= game.headline
 			.row
-				.col-xs-5
+				.col-xs-12
 					.alert.alert-info Skuif die rugbybal om 'n speler te bepunt.
 					//- if (!showUser)
 					//- 	a.btn.btn-warning.pull-right(href="/share/#{game.id}")
