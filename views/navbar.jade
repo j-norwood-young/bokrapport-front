@@ -4,9 +4,9 @@
 		div
 			if fbLoggedIn
 				.profilePic(style="background-image:url(" + user.picture + ")")
-			else
-				a#fb.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
-					i.fa.fa-facebook
-			<div class="fb-share-button" data-href="http://bokrapport.com/#{game.id}" data-layout="button"></div>
+			//- else
+			//- 	a#fb.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
+			//- 		i.fa.fa-facebook
+			<div class="fb-share-button" data-href="http://bokrapport.com/game/#{game.id}" data-layout="button"></div>
 			a.navbar-brand(href='/')
 				img(src="/images/bokrapport.png")
