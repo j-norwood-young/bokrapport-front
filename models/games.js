@@ -59,37 +59,10 @@ var game = function(id, userId) {
 		return mysql.query("SELECT AVG(player_rating.rating) AS rating, player_rating.player_id FROM player_rating WHERE game_id = ? AND player_rating.rating > 0 GROUP BY player_id", game.id);
 	})
 	.then(function(result) {
-		console.log("Result", result);
 		avg_results = result;
-		//Combine our averages with Rapport score
-		// players = rapport_results.map(function(rapport_result) {
-		// 	var tmp = avg_results.find(function(avg_result) {
-		// 		return avg_result.player_id == rapport_result.player_id;
-		// 	});
-		// 	if (tmp) {
-		// 		rapport_result.avg_rating = Math.round(tmp.rating);
-		// 	} else {
-		// 		rapport_result.avg_rating = 0;
-		// 	}
-		// 	if (user_results) {
-		// 		console.log("User results", user_results);
-		// 		var tmp = user_results.find(function(user_result) {
-		// 			return user_result.player_id == rapport_result.player_id;
-		// 		});
-		// 		if (tmp) {
-		// 			rapport_result.user_rating = tmp.rating;
-		// 		} else {
-		// 			rapport_result.user_rating = 0;	
-		// 		}
-		// 	} else {
-		// 		rapport_result.user_rating = 0;
-		// 	}
-		// 	return rapport_result;
-		// });
 		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("D MMM YYYY");
 		return mysql.query("SELECT player_rating.user_id, player_rating.player_id, player_rating.rating, player_rating.timestamp, user.picture FROM `player_rating` JOIN user ON user.id=user_id WHERE game_id = ? AND player_rating.rating > 0 ORDER BY timestamp DESC", game.id );
 	}).then(function(result) {
-		console.log("Rapport", rapport_results);
 		players.forEach(function(player) {
 			player.votes = result.filter(function(rating) {
 				return rating.player_id == player.id;
@@ -109,7 +82,6 @@ var game = function(id, userId) {
 				player.avg_rating = Math.round(tmp.rating);
 			}
 		});
-		console.log(players);
 		deferred.resolve({ game: game, players: players, rapport_results: rapport_results, avg_results: avg_results, countries: countries, user_results: user_results });
 	})
 	.then(null, function(err) {
