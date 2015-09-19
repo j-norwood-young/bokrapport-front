@@ -37,22 +37,20 @@ $(function() {
 				}
 				$.post("/api/rate", { game_id: gameId, player_id: id, rating: val })
 				.then(function(result) {
-					if (ws) {
-						ws.send(JSON.stringify({
-							isVote: true,
-							game_id: gameId,
-							player_id: id,
-							rating: val,
-							user_id: userId,
-							picture: picture
-						}));
-					}
-					return $.get("/api/rating/avg/" + gameId + "/" + id);
-				})
-				.then(function(result) {
-					// console.log($("#avg_rating_" + result.player_id));
-					$("#avg_rating_" + result.player_id).html(Math.round(result.rating));
-					// console.log(result);
+					// if (ws) {
+					// 	ws.send(JSON.stringify({
+					// 		isVote: true,
+					// 		game_id: gameId,
+					// 		player_id: id,
+					// 		rating: val,
+					// 		user_id: userId,
+					// 		picture: picture
+					// 	}));
+					// }
+					$("#dankie_" + id).hide().removeClass("hide").slideDown("slow").delay(1500).slideUp('slow');
+					result.players.forEach(function(player) {
+						$("#avg_rating_" + player.id).html(Math.round(player.avg_rating));
+					});
 				});
 			}
 		}).set(left + offset, top);

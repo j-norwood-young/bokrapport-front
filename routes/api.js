@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mysql = require("../lib/mysql");
 var moment = require("moment");
+var gameModel = require("../models/games");
 
 router.post("/login", function(req, res) {
 	mysql.upsert("user", { facebook_id: req.body.facebook_id }, { facebook_id: req.body.facebook_id, firstname: req.body.firstname, surname: req.body.surname, email: req.body.email, picture: req.body.picture, admin: 0, last_login: moment().format("YYYY-MM-DD HH:mm:ss") })
@@ -15,20 +16,30 @@ router.post("/login", function(req, res) {
 router.post("/rate", function(req, res) {
 	var rating = req.body.rating;
 	if (rating < 1) {
-		console.log("Rating less than 1");
+		// console.log("Rating less than 1");
 		mysql.remove("player_rating", { player_id: req.body.player_id, game_id: req.body.game_id, user_id: req.session.userId })
 		.then(function(result) {
-			res.send(result);
-			return;
+			return gameModel.game(req.body.game_id, req.session.userId);
+		})
+		.then(function(result) {
+			game = result;
+			res.send({ players: game.players });
+		}, function(err) {
+			console.log("error", err);
+			res.send(err);
 		});
 	} else if (rating > 10) {
 		res.send("Rating cannot be greater than 10");
 		return;
 	} else {
-		console.log("UserID", req.session.userId);
+		// console.log("UserID", req.session.userId);
 		mysql.upsert("player_rating", { player_id: req.body.player_id, game_id: req.body.game_id, user_id: req.session.userId }, { player_id: req.body.player_id, game_id: req.body.game_id, user_id: req.session.userId, rating: req.body.rating, timestamp: moment().format("YYYY-MM-DD HH:mm:ss") })
 		.then(function(result) {
-			res.send(result);	
+			return gameModel.game(req.body.game_id, req.session.userId);
+		})
+		.then(function(result) {
+			game = result;
+			res.send({ players: game.players });
 		}, function(err) {
 			console.log("error", err);
 			res.send(err);
