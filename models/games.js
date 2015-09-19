@@ -44,7 +44,7 @@ var game = function(id, userId) {
 	})
 	.then(function(result) {
 		countries = result;
-		return mysql.query("SELECT player.common_name, player.firstname, player.surname, player.photo, player.position, player.id FROM game_player JOIN player ON player.id = game_player.player_id WHERE game_player.game_id = ? ORDER BY game_player.sort_order DESC", game.id);
+		return mysql.query("SELECT player.common_name, player.firstname, player.surname, player.photo, player.position, player.id, game_player.player_type_id FROM game_player JOIN player ON player.id = game_player.player_id WHERE game_player.game_id = ? ORDER BY game_player.sort_order DESC", game.id);
 	})
 	.then(function(result) {
 		players = result;

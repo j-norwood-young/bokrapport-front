@@ -31,10 +31,14 @@
 				.alert.alert-info Dankie, jou stem is gestoor
 		.player-identity
 			img(src="/uploads/#{player.photo}")
-			if player.common_name
-				.name= player.common_name
-			else
-				.name #{player.firstname} #{player.surname}
+			.name
+				= player.common_name
+				if (player.player_type_id == 2)
+					.player_type (Plaasvervanger)
+				if (player.player_type_id == 3)
+					.player_type (Kaptein)
+				if (player.player_type_id == 4)
+					.player_type (Onderkaptein)
 		table.ratings
 			tr.avg_rating
 				td.rating-description Gemiddeld
@@ -55,3 +59,5 @@
 					else
 						| ?
 		br(style="clear:both")
+		
+		
