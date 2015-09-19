@@ -33,10 +33,10 @@
 				.name #{player.firstname} #{player.surname}
 		table.ratings
 			tr.avg_rating
-				td.rating-description
-					each vote in player.votes
-						.profilePic(data-user-id=vote.user_id style="background-image: url(#{vote.picture})")
-							=vote.rating
+				td.rating-description Gemiddeld
+					//- each vote in player.votes
+					//- 	.profilePic(data-user-id=vote.user_id style="background-image: url(#{vote.picture})")
+					//- 		=vote.rating
 				td.rating(id="avg_rating_#{player.id}")
 					if (player.avg_rating)
 						= player.avg_rating

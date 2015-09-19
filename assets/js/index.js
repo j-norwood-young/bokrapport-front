@@ -114,27 +114,24 @@ $(function() {
 			try {
 				var data = JSON.parse(ev.data);
 				console.log(data);
-				if (data.player_id) {
-					console.log("Caught player", data.player_id);
-					var playerEl = $("#player_" + data.player_id);
-					playerEl.find(".avg_rating > .rating-description").find("[data-user-id=" + data.user_id + "]").remove();
-					playerEl.find(".avg_rating > .rating-description > .profilePic").slice(0, -4).remove();
-					if (data.rating) {
-						if (data.picture) {
-							var s = "<div class='profilePic' data-user-id='" + data.user_id + "' style='background-image: url(" + data.picture + ")'>" + data.rating + "</div>";
-						} else {
-							var s = "<div class='profilePic' data-user-id='" + data.user_id + "'>" + data.rating + "</div>";
-						}
-						playerEl.find(".avg_rating > .rating-description").append(s);
-					}
-				}
+				// if (data.player_id) {
+				// 	console.log("Caught player", data.player_id);
+				// 	var playerEl = $("#player_" + data.player_id);
+				// 	playerEl.find(".avg_rating > .rating-description").find("[data-user-id=" + data.user_id + "]").remove();
+				// 	playerEl.find(".avg_rating > .rating-description > .profilePic").slice(0, -4).remove();
+				// 	if (data.rating) {
+				// 		if (data.picture) {
+				// 			var s = "<div class='profilePic' data-user-id='" + data.user_id + "' style='background-image: url(" + data.picture + ")'>" + data.rating + "</div>";
+				// 		} else {
+				// 			var s = "<div class='profilePic' data-user-id='" + data.user_id + "'>" + data.rating + "</div>";
+				// 		}
+				// 		playerEl.find(".avg_rating > .rating-description").append(s);
+				// 	}
+				// }
 			} catch(e) {
 				console.log("Not JSON, ignoring");
 			}
 		};
-		ws.onopen = function(ev) {
-			ws.send(JSON.stringify({ setData: "Yo" }));
-		}
 	}
 });
 
