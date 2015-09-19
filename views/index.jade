@@ -4,6 +4,9 @@ block content
 	.container
 		include dateline
 		if game.live
+			.row
+				.col-xs-12
+					.alert.alert-info Skuif die rugbybal om 'n speler te bepunt.
 			.row.players
 				- var x = 0;
 				each player in players
@@ -12,6 +15,4 @@ block content
 						| </div><br style="clear:both" /><div id="row" class="players">
 					- x++
 		else
-			.alert.alert-info
-				strong This BokRapport hasn't kicked off yet
-				|  Sorry, this game isn't live yet. Please check back about 10 minutes before the end of the match.
+			.alert.alert-info Dié wedstryd kan eers bepunt word wanneer dit afskop.
