@@ -4,8 +4,15 @@ html
 		title BokRapport
 		link(rel='stylesheet', href='/development/css/bokrapport.css')
 		link(rel="shortcut icon",href="/images/favicon.png")
-		meta(name="viewport", content="width=device-width, initial-scale=1")
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no")
 		meta(property="og:title",content="BokRapport")
+		meta(property="og:url",content="http://bokrapport.com/")
+		meta(property="og:type",content="website")
+		if (description)
+			meta(property="og:description",content="#{description}")
+		else
+			meta(property="og:description",content="Maak jou eie BokRapport: http://bokrapport.com")
+		meta(property="og:image",content="http://bokrapport.com/images/bokrapport-fb.jpg")
 	body
 		.bg-container
 		include navbar
