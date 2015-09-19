@@ -6,7 +6,8 @@
 					tr.user_rating
 						td.rating-description
 							.numberpicker1
-								.slider.slider-icon(id="slider_#{player.id}",data-id="#{player.id}",data-val="#{player.user_rating}")
+								- var user_rating = (player.user_rating) ? player.user_rating : 0;
+								.slider.slider-icon(id="slider_#{player.id}",data-id="#{player.id}",data-val="#{user_rating}")
 									//- i.fa.fa-arrows-h
 								.slider-background-container
 									.slider-background-vert.slider-background-vert-first
