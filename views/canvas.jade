@@ -1,0 +1,18 @@
+#pleaseWait
+	| Wag asseblief terveil ons jou deel na Facebook steer...
+#shareModal.modal
+	.modal-dialog
+		.modal-content
+			.modal-header
+				butto.close(type="button",class="close",data-dismiss="modal",aria-label="Close")
+					span(aria-hidden="true") &times;
+				h4.modal-title Deel op Facebook
+			.modal-body
+				canvas#gameCanvas(width=600,height=900,style="max-width:100%")
+				.form-group
+					label.form-label(for="boodskap") Boodskap
+					textarea#message.form-control(name="boodskap")
+						| My BokRapport vir #{game.headline}
+			.modal-footer
+				button#postFB.btn.btn-primary Deel
+

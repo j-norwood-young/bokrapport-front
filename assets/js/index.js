@@ -1,6 +1,8 @@
 // var jquery = require("jquery");
 var Q = require("q");
 var utils = require("./utils");
+var Base64Binary = require("./base64binary");
+var chroma = require("chroma-js");
 
 $(function() {
 	//Draggable Slider
@@ -131,6 +133,194 @@ $(function() {
 	// 		}
 	// 	};
 	// }
+});
+
+
+// Canvas
+$(function() {
+	// (function(d, s, id) {
+	// 	var js, fjs = d.getElementsByTagName(s)[0];
+	// 	if (d.getElementById(id)) return;
+	// 	js = d.createElement(s); js.id = id;
+	// 	js.src = "//connect.facebook.net/en_US/all.js";
+	// 	fjs.parentNode.insertBefore(js, fjs);
+	// }(document, 'script', 'facebook-jssdk'));
+
+	// window.fbAsyncInit = function() {
+	// 	FB.init({
+	// 		appId  : "882901835078866",
+	// 		status : true, 
+	// 		cookie : true, 
+	// 		xfbml  : true  // parse XFBML
+	// 	});
+	// };
+	//https://github.com/lukasz-madon/heroesgenerator
+
+	// from: http://stackoverflow.com/a/5303242/945521
+	if ( XMLHttpRequest.prototype.sendAsBinary === undefined ) {
+		XMLHttpRequest.prototype.sendAsBinary = function(string) {
+			var bytes = Array.prototype.map.call(string, function(c) {
+				return c.charCodeAt(0) & 0xff;
+			});
+			this.send(new Uint8Array(bytes).buffer);
+		};
+	};
+
+	function postImageToFacebook( authToken, filename, mimeType, imageData, message ) {
+		$("#pleaseWait").css("display", "block");
+		$("#shareModal").modal("hide");
+		// this is the multipart/form-data boundary we'll use
+		var boundary = '----ThisIsTheBoundary1234567890';   
+		// let's encode our image file, which is contained in the var
+		var formData = '--' + boundary + '\r\n'
+		formData += 'Content-Disposition: form-data; name="source"; filename="' + filename + '"\r\n';
+		formData += 'Content-Type: ' + mimeType + '\r\n\r\n';
+		for ( var i = 0; i < imageData.length; ++i ) {
+			formData += String.fromCharCode( imageData[ i ] & 0xff );
+		}
+		formData += '\r\n';
+		formData += '--' + boundary + '\r\n';
+		formData += 'Content-Disposition: form-data; name="message"\r\n\r\n';
+		formData += message + '\r\n'
+		formData += '--' + boundary + '--\r\n';
+		var xhr = new XMLHttpRequest();
+		xhr.open( 'POST', 'https://graph.facebook.com/me/photos?access_token=' + authToken, true );
+		xhr.onload = xhr.onerror = function() {
+			console.log( xhr.responseText );
+			console.log("Sent to Facebook");
+			$("#pleaseWait").css("display", "none");
+		};
+		xhr.setRequestHeader( "Content-Type", "multipart/form-data; boundary=" + boundary );
+		xhr.sendAsBinary( formData );
+	};
+
+	var canvas = document.getElementById("gameCanvas");
+
+	function postCanvasToFacebook() {
+		console.log("Posting to FB");
+		var msg = $("#message").val();
+		var data = document.getElementById("gameCanvas").toDataURL("image/jpeg");
+		console.log(data);
+		var encodedPng = data.substring(data.indexOf(',') + 1, data.length);
+		// $("#preview").attr("src", data);
+		var decodedPng = Base64Binary.decode(encodedPng);
+		postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+		
+
+		// FB.getLoginStatus(function(response) {
+		// 	if (response.status === "connected") {
+		// 		postImageToFacebook(response.authResponse.accessToken, "bokrapport", "image/png", decodedPng, "bokrapport.com");
+		// 	} else if (response.status === "not_authorized") {
+		// 		FB.login(function(response) {
+		// 			postImageToFacebook(response.authResponse.accessToken, "bokrapport", "image/png", decodedPng, "bokrapport.com");
+		// 		}, {scope: "publish_stream"});
+		// 	} else {
+		// 		FB.login(function(response)  { 
+		// 			postImageToFacebook(response.authResponse.accessToken, "bokrapport", "image/png", decodedPng, "bokrapport.com");
+		// 		}, {scope: "publish_stream"});
+		// 	}
+		// });
+	};
+
+	$("#postFB").on("click", postCanvasToFacebook);
+
+	$("#showFB").on("click", function() {
+		$("#shareModal").modal("show");
+	})
+
+	function wrapText(context, text, x, y, maxWidth, lineHeight) {
+		var words = text.split(' ');
+		var line = '';
+		for(var n = 0; n < words.length; n++) {
+			var testLine = line + words[n] + ' ';
+			var metrics = context.measureText(testLine);
+			var testWidth = metrics.width;
+			if (testWidth > maxWidth && n > 0) {
+				context.fillText(line, x, y);
+				line = words[n] + ' ';
+				y += lineHeight;
+			} else {
+				line = testLine;
+			}
+		}
+		context.fillText(line, x, y);
+	}
+
+	var gutter = 8;
+	var gutterY = 55;
+	var perRow = 5;
+	var size = 100;
+	var offsetY = 120;
+	var green = "#2e5b2d";
+	var yellow = "#eac004";
+	var red = "#e43940";
+	var context = canvas.getContext("2d", {alpha: false});
+	var bg = new Image();
+	bg.src = "/images/fbbg.jpg";
+	bg.onload = function() {
+		context.drawImage(bg, 0, 0);
+		// Heading
+		var s = userName + " se BokRapport vir " + $(".teams").text();
+		context.font = "normal 16px sans-serif";
+		context.fillStyle = "#000000";
+		context.textBaseline = "top";
+		context.fillText(s, 10, 5);
+
+		var x = 0;
+		var imgs = [];
+		$(".player").each(function(player) {
+			var playerEl = $(this);
+			var name = $(this).find(".name").text().replace("(", " (");
+			var src = $(this).find(".player-identity > img").attr("src");
+			var img = new Image();
+			img.src = src;
+			img.onload = function() {
+				var offsetX = gutter + (x * (size + gutter));
+				//Score
+				var val = playerEl.find(".user_rating > .rating").text();
+				var colour = "#666";
+				var scale = chroma.scale([red, green]);
+				if (parseInt(val)) {
+					colour = scale(val / 10).hex();
+				}
+				context.beginPath();
+				context.arc(offsetX + 18, offsetY + 32, 20, 0, Math.PI * 2, false);
+				context.fillStyle = colour;
+				context.fill();
+				context.font = "normal 30px sans-serif";
+				context.fillStyle = "#ffffff";
+				
+
+				if (val == 10) {
+					context.fillText(val, offsetX, offsetY + 15);
+				} else {
+					context.fillText(val, offsetX + 10, offsetY + 15);
+				}
+
+				// Image
+				context.drawImage(img, offsetX, offsetY, size, size);
+				// Name block
+				context.fillStyle = "#eac004";
+				context.fillRect(offsetX, offsetY + size, size, 40);
+				// Name
+				context.font = "normal 12px PlayfairDisplay";
+				context.fillStyle = "#000";
+				context.textBaseline = "top";
+				wrapText(context, name, offsetX + 5, offsetY + size + 5, size - 10, 10);
+				
+				// context.closePath();
+
+				
+				
+				//Get ready for next one
+				x++;
+				if (x % perRow == 0) {
+					x = 0;
+					offsetY = offsetY + size + gutterY;
+				}
+			}
+		});
+	}
 });
 
 // Google Analytics

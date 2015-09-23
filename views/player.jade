@@ -30,7 +30,7 @@
 			.col-xs-12
 				.alert.alert-info Dankie, jou stem is gestoor
 		.player-identity
-			img(src="/uploads/#{player.photo}")
+			img(id="img_#{player.id}",src="/uploads/#{player.photo}")
 			.name
 				= player.common_name
 				if (player.player_type_id == 2)

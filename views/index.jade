@@ -3,10 +3,19 @@ extends layout
 block content
 	.container
 		include dateline
+		include canvas
 		if game.live
 			.row
 				.col-xs-12
-					.alert.alert-info Skuif die rugbybal om 'n speler te bepunt.
+					.alert.alert-info Skuif die rugbybal om 'n punt aan elke speler toe te ken.
+			.row
+				.col-xs-12.center.margin-bottom-20
+					if fbLoggedIn
+						#showFB.btn.btn-primary Deel my punte op Facebook
+					else
+						a.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
+							i.fa.fa-facebook 
+							|  Skryf In om joy punte te deel
 			.row.players
 				- var x = 0;
 				each player in players

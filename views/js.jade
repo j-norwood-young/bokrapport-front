@@ -4,7 +4,13 @@ block javascript
 		script
 			| var gameId = #{game_id};
 			| var userId = #{userId};
+			if (user.firstname)
+				| var userName = "#{user.firstname}";
 			| var picture = "#{user.picture}";
+			if (fbLoggedIn)
+				| var accessToken = "#{user.token}";
+			else
+				| var accessToken = null;
 
 	script(src="/jquery.min.js")
 	script(src="/development/js/bootstrap.js")
