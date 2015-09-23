@@ -225,6 +225,7 @@ $(function() {
 	$("#postFB").on("click", postCanvasToFacebook);
 
 	$("#showFB").on("click", function() {
+		drawImage();
 		$("#shareModal").modal("show");
 	})
 
@@ -246,80 +247,83 @@ $(function() {
 		context.fillText(line, x, y);
 	}
 
-	var gutter = 8;
-	var gutterY = 55;
-	var perRow = 5;
-	var size = 100;
-	var offsetY = 120;
-	var green = "#2e5b2d";
-	var yellow = "#eac004";
-	var red = "#e43940";
-	var context = canvas.getContext("2d", {alpha: false});
-	var bg = new Image();
-	bg.src = "/images/fbbg.jpg";
-	bg.onload = function() {
-		context.drawImage(bg, 0, 0);
-		// Heading
-		var s = userName + " se BokRapport vir " + $(".teams").text();
-		context.font = "normal 16px sans-serif";
-		context.fillStyle = "#000000";
-		context.textBaseline = "top";
-		context.fillText(s, 10, 5);
+	
 
-		var x = 0;
-		var imgs = [];
-		$(".player").each(function(player) {
-			var playerEl = $(this);
-			var name = $(this).find(".name").text().replace("(", " (");
-			var src = $(this).find(".player-identity > img").attr("src");
-			var img = new Image();
-			img.src = src;
-			img.onload = function() {
-				var offsetX = gutter + (x * (size + gutter));
-				//Score
-				var val = playerEl.find(".user_rating > .rating").text();
-				var colour = "#666";
-				var scale = chroma.scale([red, green]);
-				if (parseInt(val)) {
-					colour = scale(val / 10).hex();
+	var drawImage = function() {
+		var gutter = 8;
+		var gutterY = 55;
+		var perRow = 5;
+		var size = 100;
+		var offsetY = 120;
+		var green = "#2e5b2d";
+		var yellow = "#eac004";
+		var red = "#e43940";
+		canvas.width = canvas.width;
+		var context = canvas.getContext("2d", {alpha: false});
+		var bg = new Image();
+		bg.src = "/images/fbbg.jpg";
+		bg.onload = function() {
+			context.drawImage(bg, 0, 0);
+			// Heading
+			var s = userName + " se BokRapport vir " + $(".teams").text();
+			context.font = "normal 16px sans-serif";
+			context.fillStyle = "#000000";
+			context.textBaseline = "top";
+			context.fillText(s, 10, 5);
+
+			var x = 0;
+			var imgs = [];
+			$(".player").each(function(player) {
+				var playerEl = $(this);
+				var name = $(this).find(".name").text().replace("(", " (");
+				var src = $(this).find(".player-identity > img").attr("src");
+				var img = new Image();
+				img.src = src;
+				img.onload = function() {
+					var offsetX = gutter + (x * (size + gutter));
+					//Score
+					var val = playerEl.find(".user_rating > .rating").text();
+					var colour = "#666";
+					var scale = chroma.scale([red, green]);
+					if (parseInt(val)) {
+						colour = scale(val / 10).hex();
+					}
+					context.beginPath();
+					context.arc(offsetX + 18, offsetY + 32, 20, 0, Math.PI * 2, false);
+					context.fillStyle = colour;
+					context.fill();
+					context.font = "normal 30px sans-serif";
+					context.fillStyle = "#ffffff";
+					
+
+					if (val == 10) {
+						context.fillText(val, offsetX, offsetY + 15);
+					} else {
+						context.fillText(val, offsetX + 10, offsetY + 15);
+					}
+
+					// Image
+					context.drawImage(img, offsetX, offsetY, size, size);
+					// Name block
+					context.fillStyle = "#eac004";
+					context.fillRect(offsetX, offsetY + size, size, 40);
+					// Name
+					context.font = "normal 12px PlayfairDisplay";
+					context.fillStyle = "#000";
+					context.textBaseline = "top";
+					wrapText(context, name, offsetX + 5, offsetY + size + 5, size - 10, 10);
+					
+					// context.closePath();
+					
+					//Get ready for next one
+					x++;
+					if (x % perRow == 0) {
+						x = 0;
+						offsetY = offsetY + size + gutterY;
+					}
 				}
-				context.beginPath();
-				context.arc(offsetX + 18, offsetY + 32, 20, 0, Math.PI * 2, false);
-				context.fillStyle = colour;
-				context.fill();
-				context.font = "normal 30px sans-serif";
-				context.fillStyle = "#ffffff";
-				
-
-				if (val == 10) {
-					context.fillText(val, offsetX, offsetY + 15);
-				} else {
-					context.fillText(val, offsetX + 10, offsetY + 15);
-				}
-
-				// Image
-				context.drawImage(img, offsetX, offsetY, size, size);
-				// Name block
-				context.fillStyle = "#eac004";
-				context.fillRect(offsetX, offsetY + size, size, 40);
-				// Name
-				context.font = "normal 12px PlayfairDisplay";
-				context.fillStyle = "#000";
-				context.textBaseline = "top";
-				wrapText(context, name, offsetX + 5, offsetY + size + 5, size - 10, 10);
-				
-				// context.closePath();
-
-				
-				
-				//Get ready for next one
-				x++;
-				if (x % perRow == 0) {
-					x = 0;
-					offsetY = offsetY + size + gutterY;
-				}
-			}
-		});
+			});
+		}
 	}
 });
 
