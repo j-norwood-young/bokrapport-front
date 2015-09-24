@@ -203,20 +203,36 @@ $(function() {
 		console.log("Posting to FB");
 		var msg = $("#message").val();
 		var data = document.getElementById("gameCanvas").toDataURL("image/jpeg");
-		console.log(data);
+		// console.log(data);
 		var encodedPng = data.substring(data.indexOf(',') + 1, data.length);
 		// $("#preview").attr("src", data);
 		var decodedPng = Base64Binary.decode(encodedPng);
 		// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
 		
-		FB.getLoginStatus(function(response) {
+		FB.api("/me/permissions?access_token=" + accessToken, function(response) {
+			// console.log("Response", response);
+			var publish_actions = false;
+			if (response.data) {
+				response.data.forEach(function(perm) {
+					if ((perm.permission == "publish_actions") && (perm.status == "granted")) {
+						publish_actions = true;
+					}
+				})
+			}
+			if (!publish_actions) {
+				FB.login(function(response) {
+					postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+				}, {scope: "publish_actions"});
+			} else {
+				postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+			}
 			// console.log(response);
 			// if (response.status === "connected") {
 			// 	postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
 			// } else if (response.status === "not_authorized") {
-				FB.login(function(response) {
-					postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-				}, {scope: "publish_actions"});
+				// FB.login(function(response) {
+					// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+				// }, {scope: "publish_actions"});
 			// } else {
 			// 	FB.login(function(response)  { 
 			// 		postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
