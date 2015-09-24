@@ -40,6 +40,7 @@ router.get('/', function(req, res, next) {
 	.then(function(result) {
 		games = result;
 		game.games = games;
+		console.log(game);
 		res.render("index", game);
 	})
 	.then(null, function(err) {

@@ -10,7 +10,7 @@
 		div(id="col-xs-#{colWidth}")
 			.row
 				.col-xs-12
-					.venue #{game.venue_name}
+					.venue= game.venue_name
 					.datetime= game.utime
 			.row
 				.col-xs-12
@@ -24,4 +24,10 @@
 										= g.headline
 										|  (#{g.utime})
 					.teams= game.headline
-				
+			if game.live
+				.row.scores
+					.col-xs-12
+						each country in countries
+							.country
+								img(src="/uploads/#{country.picture}")
+								.score= country.score

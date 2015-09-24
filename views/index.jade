@@ -8,14 +8,6 @@ block content
 			.row
 				.col-xs-12
 					.alert.alert-info Skuif die rugbybal om 'n punt aan elke speler toe te ken.
-			.row
-				.col-xs-12.center.margin-bottom-20
-					if fbLoggedIn
-						#showFB.btn.btn-primary Deel my punte op Facebook
-					else
-						a.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
-							i.fa.fa-facebook 
-							|  Skryf In om joy punte te deel
 			.row.players
 				- var x = 0;
 				each player in players
@@ -23,6 +15,13 @@ block content
 					if (x % 2)
 						| </div><br style="clear:both" /><div class="row players">
 					- x++
+			.row
+				.col-xs-12.center.margin-bottom-20
+					if fbLoggedIn
+						#showFB.btn.btn-red Só lyk jou BokRapport
+					else
+						a.btn.btn-red.fb-btn(type="button",href="/oauth/auth/facebook")
+							|  Skryf in om joy punte te deel
 		else
 			.alert.alert-info
 				|  Dié wedstryd kan eers bepunt word wanneer dit afskop.

@@ -1,12 +1,15 @@
 // Fixed navbar
 .navbar.navbar-default.navbar-fixed-top(role='navigation')
 	.container
-		div
-			if fbLoggedIn
-				.profilePic(style="background-image:url(" + user.picture + ")")
-			//- else
-			//- 	a#fb.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
-			//- 		i.fa.fa-facebook
-			.fb-share-button(data-href="http://bokrapport.com/game/" + game.id,data-layout="button")
-			a.navbar-brand(href='/')
-				img(src="/images/bokrapport.png")
+		div.row
+			.col-xs-12
+				if fbLoggedIn
+					.profilePic(style="background-image:url(" + user.picture + ")")
+				//- else
+				//- 	a#fb.btn.btn-primary.fb-btn(type="button",href="/oauth/auth/facebook")
+				//- 		i.fa.fa-facebook
+				a.navbar-brand(href='/')
+					img(src="/images/bokrapport.png")
+		div.row
+			.col-xs-11
+				.fb-like(data-href="http://bokrapport.com/game/" + game.id,data-layout="standard",data-action="like",style="max-width:100%")
