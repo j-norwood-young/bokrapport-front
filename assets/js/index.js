@@ -185,11 +185,14 @@ $(function() {
 		formData += '--' + boundary + '--\r\n';
 		var xhr = new XMLHttpRequest();
 		xhr.open( 'POST', 'https://graph.facebook.com/me/photos?access_token=' + authToken, true );
-		xhr.onload = xhr.onerror = function() {
+		xhr.onload = function() {
 			console.log( xhr.responseText );
 			console.log("Sent to Facebook");
 			$("#pleaseWait").css("display", "none");
 		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		}
 		xhr.setRequestHeader( "Content-Type", "multipart/form-data; boundary=" + boundary );
 		xhr.sendAsBinary( formData );
 	};
@@ -204,22 +207,22 @@ $(function() {
 		var encodedPng = data.substring(data.indexOf(',') + 1, data.length);
 		// $("#preview").attr("src", data);
 		var decodedPng = Base64Binary.decode(encodedPng);
-		postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+		// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
 		
-
-		// FB.getLoginStatus(function(response) {
-		// 	if (response.status === "connected") {
-		// 		postImageToFacebook(response.authResponse.accessToken, "bokrapport", "image/png", decodedPng, "bokrapport.com");
-		// 	} else if (response.status === "not_authorized") {
-		// 		FB.login(function(response) {
-		// 			postImageToFacebook(response.authResponse.accessToken, "bokrapport", "image/png", decodedPng, "bokrapport.com");
-		// 		}, {scope: "publish_stream"});
-		// 	} else {
-		// 		FB.login(function(response)  { 
-		// 			postImageToFacebook(response.authResponse.accessToken, "bokrapport", "image/png", decodedPng, "bokrapport.com");
-		// 		}, {scope: "publish_stream"});
-		// 	}
-		// });
+		FB.getLoginStatus(function(response) {
+			// console.log(response);
+			// if (response.status === "connected") {
+			// 	postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+			// } else if (response.status === "not_authorized") {
+				FB.login(function(response) {
+					postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+				}, {scope: "publish_actions"});
+			// } else {
+			// 	FB.login(function(response)  { 
+			// 		postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+			// 	}, {scope: "publish_stream"});
+			// }
+		});
 	};
 
 	$("#postFB").on("click", postCanvasToFacebook);
