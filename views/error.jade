@@ -3,7 +3,10 @@ extends layout
 block content
 	.container
 		.alert.alert-danger
-			strong Fout #{error.status}
+			if (error.status)
+				strong Fout #{error.status}
+			else
+				strong Fout #{error}
 			| 
 			= message
 			pre #{error.stack}
