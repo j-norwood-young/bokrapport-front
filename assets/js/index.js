@@ -342,32 +342,32 @@ $(function() {
 		// $("#preview").attr("src", data);
 		var decodedPng = Base64Binary.decode(encodedPng);
 		// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-		if (!publish_actions) {
-			FB.login(function(response) {
+		// if (!publish_actions) {
+		// 	FB.login(function(response) {
 				getUser(function() { 
 					postImageToFacebook("bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com") 
 				});
 				
-			}, {scope: "publish_actions"});
-		} else {
+			// }, {scope: "publish_actions"});
+		// } else {
 			postImageToFacebook("bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-		}
+		// }
 	};
 
 	$("#postFB").on("click", postCanvasToFacebook);
 
 	$("#showFB").on("click", function() {
-		if (!publish_actions) {
+		// if (!publish_actions) {
 			FB.login(function(response) {
 				getUser(function() {
 					drawImage();
 					$("#shareModal").modal("show");
 				});
 			}, {scope: "publish_actions"});
-		} else {
-			drawImage();
-			$("#shareModal").modal("show");
-		}
+		// } else {
+		// 	drawImage();
+		// 	$("#shareModal").modal("show");
+		// }
 	});
 
 	function wrapText(context, text, x, y, maxWidth, lineHeight) {
