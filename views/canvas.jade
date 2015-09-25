@@ -4,15 +4,17 @@
 	.modal-dialog
 		.modal-content
 			.modal-header
-				butto.close(type="button",class="close",data-dismiss="modal",aria-label="Close")
+				button.close(type="button",data-dismiss="modal",aria-label="Close")
 					span(aria-hidden="true") &times;
-				h4.modal-title Deel op Facebook
+				//- h4.modal-title Deel op Facebook
+				h4.modal-title Só lyk jou BokRapport
 			.modal-body
 				canvas#gameCanvas(width=600,height=900,style="max-width:100%")
-				.form-group
-					label.form-label(for="boodskap") Boodskap
-					textarea#message.form-control(name="boodskap")
-						| My BokRapport vir #{game.headline}. Hoe lyk joune? Gaan na www.bokrapport.com om te sê.
+				//- .form-group
+				//- 	label.form-label(for="boodskap") Boodskap
+				//- 	textarea#message.form-control(name="boodskap")
+				//- 		| My BokRapport vir #{game.headline}. Hoe lyk joune? Gaan na www.bokrapport.com om te sê.
 			.modal-footer
-				button#postFB.btn.btn-primary.btn-lg Deel
+				//- button#postFB.btn.btn-primary.btn-lg Deel
+				button.btn-primary.btn(type="button",data-dismiss="modal",aria-label="Close") Sluit
 
