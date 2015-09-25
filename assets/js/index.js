@@ -146,14 +146,7 @@ $(function() {
 	// 	fjs.parentNode.insertBefore(js, fjs);
 	// }(document, 'script', 'facebook-jssdk'));
 
-	// window.fbAsyncInit = function() {
-	// 	FB.init({
-	// 		appId  : "882901835078866",
-	// 		status : true, 
-	// 		cookie : true, 
-	// 		xfbml  : true  // parse XFBML
-	// 	});
-	// };
+	
 	//https://github.com/lukasz-madon/heroesgenerator
 
 	// from: http://stackoverflow.com/a/5303242/945521
@@ -199,6 +192,28 @@ $(function() {
 
 	var canvas = document.getElementById("gameCanvas");
 
+	var publish_actions = false;
+
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId  : "882901835078866",
+			status : true, 
+			cookie : true,
+			version:  'v2.4',
+			xfbml  : true  // parse XFBML
+		});
+		FB.api("/me/permissions?access_token=" + accessToken, function(response) {
+			if (response.data) {
+				response.data.forEach(function(perm) {
+					if ((perm.permission == "publish_actions") && (perm.status == "granted")) {
+						publish_actions = true;
+					}
+				})
+			}
+		});
+	};
+	
+
 	function postCanvasToFacebook() {
 		console.log("Posting to FB");
 		var msg = $("#message").val();
@@ -208,37 +223,13 @@ $(function() {
 		// $("#preview").attr("src", data);
 		var decodedPng = Base64Binary.decode(encodedPng);
 		// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-		
-		FB.api("/me/permissions?access_token=" + accessToken, function(response) {
-			// console.log("Response", response);
-			var publish_actions = false;
-			if (response.data) {
-				response.data.forEach(function(perm) {
-					if ((perm.permission == "publish_actions") && (perm.status == "granted")) {
-						publish_actions = true;
-					}
-				})
-			}
-			if (!publish_actions) {
-				FB.login(function(response) {
-					postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-				}, {scope: "publish_actions"});
-			} else {
+		if (!publish_actions) {
+			FB.login(function(response) {
 				postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-			}
-			// console.log(response);
-			// if (response.status === "connected") {
-			// 	postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-			// } else if (response.status === "not_authorized") {
-				// FB.login(function(response) {
-					// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-				// }, {scope: "publish_actions"});
-			// } else {
-			// 	FB.login(function(response)  { 
-			// 		postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
-			// 	}, {scope: "publish_stream"});
-			// }
-		});
+			}, {scope: "publish_actions"});
+		} else {
+			postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+		}
 	};
 
 	$("#postFB").on("click", postCanvasToFacebook);
