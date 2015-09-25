@@ -4,6 +4,65 @@ var utils = require("./utils");
 var Base64Binary = require("./base64binary");
 var chroma = require("chroma-js");
 
+// Production steps of ECMA-262, Edition 5, 15.4.4.18
+// Reference: http://es5.github.io/#x15.4.4.18
+if (!Array.prototype.forEach) {
+
+  Array.prototype.forEach = function(callback, thisArg) {
+
+    var T, k;
+
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If IsCallable(callback) is false, throw a TypeError exception.
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    // 6. Let k be 0
+    k = 0;
+
+    // 7. Repeat, while k < len
+    while (k < len) {
+
+      var kValue;
+
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the HasProperty internal method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Call the Call internal method of callback with T as the this value and
+        // argument list containing kValue, k, and O.
+        callback.call(T, kValue, k, O);
+      }
+      // d. Increase k by 1.
+      k++;
+    }
+    // 8. return undefined
+  };
+}
+
 $(function() {
 	//Draggable Slider
 	var draggables = [];
@@ -136,16 +195,88 @@ $(function() {
 });
 
 
-// Canvas
+// Sharing
 $(function() {
-	// (function(d, s, id) {
-	// 	var js, fjs = d.getElementsByTagName(s)[0];
-	// 	if (d.getElementById(id)) return;
-	// 	js = d.createElement(s); js.id = id;
-	// 	js.src = "//connect.facebook.net/en_US/all.js";
-	// 	fjs.parentNode.insertBefore(js, fjs);
-	// }(document, 'script', 'facebook-jssdk'));
+	var publish_actions = false;
+	var logged_in = false;
+	var fb_user = {};
 
+	var getPermissions = function() {
+		var publish_actions = false;
+		var deferred = Q.defer();
+		FB.api("/me/permissions?access_token=" + fb_user.accessToken, function(response) {
+			// console.log(response);
+			if (response.data) {
+				response.data.forEach(function(perm) {
+					if ((perm.permission == "publish_actions") && (perm.status == "granted")) {
+						publish_actions = true;
+					}
+				});
+				deferred.resolve(publish_actions);
+			} else {
+				// console.log("Could not get permissions");
+				deferred.reject("Could not get permissions");
+			}
+		});
+		return deferred.promise;
+	}
+
+	var getName = function() {
+		var deferred = Q.defer();
+		FB.api("/me?access_token=" + fb_user.accessToken, function(response) {
+			// console.log(response);
+			if (response.name) {
+				deferred.resolve(response.name);
+			} else {
+				deferred.reject("Could not find name");
+			}
+		});
+		return deferred.promise;
+	}
+
+	var getLoginStatus = function() {
+		var deferred = Q.defer();
+		FB.getLoginStatus(function(response) {
+			if (response.status === 'connected') {
+				deferred.resolve(response.authResponse);
+			} else {
+				deferred.reject("Not connected to Facebook");
+			}
+		});
+		return deferred.promise;
+	}
+	var getUser = function(next) {
+		next = next || function() {};
+		getLoginStatus()
+		.then(function(result) {
+			fb_user.userId = result.userId;
+			fb_user.accessToken = result.accessToken;
+			return getPermissions();
+		})
+		.then(function(result) {
+			publish_actions = result;
+			return getName();
+		})
+		.then(function(result) {
+			fb_user.name = result;
+		})
+		.then(function() {
+			next();
+		}, function(err) {
+			console.log("Error", err);
+		});
+	}
+
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId  : "882901835078866",
+			status : true, 
+			cookie : true,
+			version:  'v2.4',
+			xfbml  : true  // parse XFBML
+		});
+		getUser();
+	};
 	
 	//https://github.com/lukasz-madon/heroesgenerator
 
@@ -159,7 +290,7 @@ $(function() {
 		};
 	};
 
-	function postImageToFacebook( authToken, filename, mimeType, imageData, message ) {
+	function postImageToFacebook(filename, mimeType, imageData, message ) {
 		$("#pleaseWait").css("display", "block");
 		$("#shareModal").modal("hide");
 		// this is the multipart/form-data boundary we'll use
@@ -173,46 +304,34 @@ $(function() {
 		}
 		formData += '\r\n';
 		formData += '--' + boundary + '\r\n';
+		formData += 'Content-Type: text/plain; charset=utf-8\r\n';
 		formData += 'Content-Disposition: form-data; name="message"\r\n\r\n';
-		formData += message + '\r\n'
+		formData += unescape(encodeURIComponent(message)) + '\r\n'
 		formData += '--' + boundary + '--\r\n';
 		var xhr = new XMLHttpRequest();
-		xhr.open( 'POST', 'https://graph.facebook.com/me/photos?access_token=' + authToken, true );
+		xhr.open( 'POST', 'https://graph.facebook.com/me/photos?access_token=' + fb_user.accessToken, true );
 		xhr.onload = function() {
-			console.log( xhr.responseText );
+			// console.log( xhr );
+			if (xhr.statusText != "OK") {
+				try {
+					alert(JSON.parse(xhr.responseText).error.message);	
+				} catch(e) {
+					alert("Daar was 'n fout, probeer later");
+				}
+				
+			}
 			console.log("Sent to Facebook");
 			$("#pleaseWait").css("display", "none");
 		};
 		xhr.onerror = function() {
 			console.log(xhr);
+			alert("Oops, daar was 'n fout");
 		}
 		xhr.setRequestHeader( "Content-Type", "multipart/form-data; boundary=" + boundary );
 		xhr.sendAsBinary( formData );
 	};
 
 	var canvas = document.getElementById("gameCanvas");
-
-	var publish_actions = false;
-
-	window.fbAsyncInit = function() {
-		FB.init({
-			appId  : "882901835078866",
-			status : true, 
-			cookie : true,
-			version:  'v2.4',
-			xfbml  : true  // parse XFBML
-		});
-		FB.api("/me/permissions?access_token=" + accessToken, function(response) {
-			if (response.data) {
-				response.data.forEach(function(perm) {
-					if ((perm.permission == "publish_actions") && (perm.status == "granted")) {
-						publish_actions = true;
-					}
-				})
-			}
-		});
-	};
-	
 
 	function postCanvasToFacebook() {
 		console.log("Posting to FB");
@@ -225,19 +344,31 @@ $(function() {
 		// postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
 		if (!publish_actions) {
 			FB.login(function(response) {
-				postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+				getUser(function() { 
+					postImageToFacebook("bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com") 
+				});
+				
 			}, {scope: "publish_actions"});
 		} else {
-			postImageToFacebook(accessToken, "bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+			postImageToFacebook("bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
 		}
 	};
 
 	$("#postFB").on("click", postCanvasToFacebook);
 
 	$("#showFB").on("click", function() {
-		drawImage();
-		$("#shareModal").modal("show");
-	})
+		if (!publish_actions) {
+			FB.login(function(response) {
+				getUser(function() {
+					drawImage();
+					$("#shareModal").modal("show");
+				});
+			}, {scope: "publish_actions"});
+		} else {
+			drawImage();
+			$("#shareModal").modal("show");
+		}
+	});
 
 	function wrapText(context, text, x, y, maxWidth, lineHeight) {
 		var words = text.split(' ');
@@ -275,7 +406,11 @@ $(function() {
 		bg.onload = function() {
 			context.drawImage(bg, 0, 0);
 			// Heading
-			var s = userName + " se BokRapport vir " + $(".teams").text();
+			if (fb_user.name) {
+				var s = fb_user.name + " se BokRapport vir " + $(".teams").text();
+			} else {
+				var s = "My BokRapport vir " + $(".teams").text();
+			}
 			context.font = "normal 16px sans-serif";
 			context.fillStyle = "#000000";
 			context.textBaseline = "top";

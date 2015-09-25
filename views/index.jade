@@ -17,11 +17,7 @@ block content
 					- x++
 			.row
 				.col-xs-12.center.margin-bottom-20
-					if fbLoggedIn
-						#showFB.btn.btn-red Só lyk jou BokRapport
-					else
-						a.btn.btn-red.fb-btn(type="button",href="/oauth/auth/facebook")
-							|  Skryf in om jou punte te deel
+					#showFB.btn.btn-red Só lyk jou BokRapport
 		else
 			.alert.alert-info
 				|  Dié wedstryd kan eers bepunt word wanneer dit afskop.
