@@ -10,6 +10,7 @@
 				//- 		i.fa.fa-facebook
 				a.navbar-brand(href='/')
 					img(src="/images/bokrapport.png")
-		div.row
-			.col-xs-11
-				.fb-like(data-href="http://bokrapport.com/game/" + game.id,data-layout="standard",data-action="like",style="max-width:100%")
+		if (game)
+			div.row
+				.col-xs-11
+					.fb-like(data-href="http://bokrapport.com/game/" + game.id,data-layout="standard",data-action="like",style="max-width:100%")
