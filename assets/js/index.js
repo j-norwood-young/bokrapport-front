@@ -192,6 +192,16 @@ $(function() {
 	// 		}
 	// 	};
 	// }
+
+	//Update Scores
+	setInterval(function() {
+		$.get("/api/score/" + gameId)
+		.then(function(result) {
+			result.forEach(function(team) {
+				$("#country_score_" + team.country_id).find(".score").html(team.score);
+			});
+		});
+	}, 60000)
 });
 
 
@@ -345,29 +355,29 @@ $(function() {
 		// if (!publish_actions) {
 		// 	FB.login(function(response) {
 				getUser(function() { 
-					postImageToFacebook("bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com") 
+					postImageToFacebook("bokrapport", "image/png", decodedPng, msg) 
 				});
 				
 			// }, {scope: "publish_actions"});
 		// } else {
-			postImageToFacebook("bokrapport", "image/png", decodedPng, msg + "\nhttp://bokrapport.com");
+			// postImageToFacebook("bokrapport", "image/png", decodedPng, msg);
 		// }
 	};
 
 	$("#postFB").on("click", postCanvasToFacebook);
 
 	$("#showFB").on("click", function() {
-		// if (!publish_actions) {
+		if (!publish_actions) {
 			FB.login(function(response) {
 				getUser(function() {
 					drawImage();
 					$("#shareModal").modal("show");
 				});
 			}, {scope: "publish_actions"});
-		// } else {
-		// 	drawImage();
-		// 	$("#shareModal").modal("show");
-		// }
+		} else {
+			drawImage();
+			$("#shareModal").modal("show");
+		}
 	});
 
 	function wrapText(context, text, x, y, maxWidth, lineHeight) {

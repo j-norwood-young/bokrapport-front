@@ -28,6 +28,6 @@
 				.row.scores
 					.col-xs-12
 						each country in countries
-							.country
+							.country(id="country_score_#{country.id}")
 								img(src="/uploads/#{country.picture}")
 								.score= country.score

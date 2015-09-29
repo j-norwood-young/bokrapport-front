@@ -61,4 +61,11 @@ router.get("/rating/avg/:game", function(req, res) {
 	})
 });
 
+router.get("/score/:game", function(req, res) {
+	mysql.query("SELECT * FROM country_game WHERE game_id=?", [req.params.game])
+	.then(function(result) {
+		res.send(result);
+	});
+})
+
 module.exports = router;
