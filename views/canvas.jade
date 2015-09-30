@@ -6,15 +6,17 @@
 			.modal-header
 				button.close(type="button",data-dismiss="modal",aria-label="Close")
 					span(aria-hidden="true") &times;
-				//- h4.modal-title Deel op Facebook
-				h4.modal-title Só lyk jou BokRapport
+				h4.modal-title 
+					strong Deel op Facebook
+				//- h4.modal-title Só lyk jou BokRapport
 			.modal-body
 				canvas#gameCanvas(width=600,height=900,style="max-width:100%")
-				//- .form-group
-				//- 	label.form-label(for="boodskap") Boodskap
-				//- 	textarea#message.form-control(name="boodskap")
-				//- 		| My BokRapport vir #{game.headline}. Hoe lyk joune? Gaan na www.bokrapport.com om te sê.
+				.form-group
+					label.form-label(for="boodskap") Boodskap
+					textarea#message.form-control(name="boodskap")
 			.modal-footer
-				//- button#postFB.btn.btn-primary.btn-lg Deel
-				button.btn-primary.btn(type="button",data-dismiss="modal",aria-label="Close") Sluit
+				button#postFB.btn.btn-primary.btn-lg
+					i.fa.fa-facebook
+					|  Deel op Facebook
+				button.btn-warning.btn.btn-lg(type="button",data-dismiss="modal",aria-label="Close") Sluit
 
