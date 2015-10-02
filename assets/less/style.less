@@ -23,11 +23,13 @@ canvas {
 	position: relative;
 }
 .bg-container {
+	z-index: -1;
 	width: 100vw;
 	height: 100vh;
-	position: fixed;
+	position: fixed !important;
 	background: url("/images/bg5.jpg") top center no-repeat fixed;
-	background-size: cover;
+	background-size: cover !important;
+	background-attachment: fixed !important;
 }
 
 .alert {
@@ -75,5 +77,10 @@ canvas {
 }
 
 .margin-bottom-20 {
+	margin-bottom: 20px;
+}
+
+.advert {
+	max-width: 100%;
 	margin-bottom: 20px;
 }
