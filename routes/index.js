@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require("../lib/mysql");
-var moment = require("moment-timezone");
 var gameModel = require("../models/games");
 
 if (!Array.prototype.find) {
@@ -63,6 +62,7 @@ router.get("/game/:id", function(req, res, next) {
 	.then(function(result) {
 		games = result;
 		game.games = games;
+		console.log("utime", game.utime);
 		res.render("index", game);
 	})
 	.then(null, function(err) {

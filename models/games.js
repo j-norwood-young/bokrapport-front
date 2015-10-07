@@ -60,7 +60,7 @@ var game = function(id, userId) {
 	})
 	.then(function(result) {
 		avg_results = result;
-		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("D MMM YYYY");
+		game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("D MMM YYYY").replace("Oct", "Okt");
 		return mysql.query("SELECT player_rating.user_id, player_rating.player_id, player_rating.rating, player_rating.timestamp, user.picture FROM `player_rating` JOIN user ON user.id=user_id WHERE game_id = ? AND player_rating.rating > 0 ORDER BY timestamp DESC", game.id );
 	}).then(function(result) {
 		players.forEach(function(player) {
@@ -119,7 +119,7 @@ var games = function() {
 			});
 			if (!tmp) {
 				game.countries = [{ name: game.country_name, score: game.score }];
-				game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("ddd D MMM YYYY");
+				game.utime = moment(game.utime * 1000).tz("Africa/Johannesburg").format("ddd D MMM YYYY").replace("Oct", "Okt");
 				games.push(game);
 			} else {
 				tmp.countries.push({ name: game.country_name, score: game.score });
